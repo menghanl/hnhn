@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HN Reader</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: Verdana, Geneva, sans-serif;
+      background: #f6f6ef;
+      color: #828282;
+      font-size: 10pt;
+    }
+
+    header {
+      background: #ff6600;
+      padding: 2px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header h1 {
+      font-size: 13px;
+      color: #000;
+      font-weight: 700;
+    }
+    .header-sub { font-size: 10px; color: #000; opacity: 0.6; }
+
+    main {
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    #status { padding: 5px 10px; color: #828282; font-size: 10pt; }
+    #status:empty { display: none; }
+
+    .item { padding: 5px 10px 0 10px; }
+
+    .item-title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+    .item-rank {
+      color: #828282;
+      font-size: 10pt;
+      min-width: 28px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .item-title a {
+      font-size: 10pt;
+      color: #000;
+      text-decoration: none;
+    }
+    .item-title a:visited { color: #828282; }
+    .item-title a:hover { text-decoration: underline; }
+    .item-domain {
+      font-size: 8pt;
+      color: #828282;
+      margin-left: 3px;
+    }
+
+    .item-sub {
+      font-size: 7pt;
+      color: #828282;
+      padding-left: 33px;
+      padding-bottom: 2px;
+    }
+    .item-sub a { color: #828282; text-decoration: none; }
+    .item-sub a:hover { text-decoration: underline; }
+    .item-sub .hl { color: #ff6600; font-weight: 700; }
+
+    .item-quip {
+      font-size: 8pt;
+      color: #666;
+      font-style: italic;
+      padding-left: 33px;
+      padding-bottom: 2px;
+    }
+
+    .item-summary {
+      font-size: 8pt;
+      color: #666;
+      padding: 4px 8px;
+      margin: 2px 0 2px 33px;
+      background: #f0ead6;
+      border-left: 2px solid #ff6600;
+      line-height: 1.5;
+    }
+
+    .item-expand {
+      padding-left: 33px;
+      padding-bottom: 4px;
+      display: none;
+    }
+    .item-expand.has-ai { display: block; }
+
+    .expand-btn {
+      background: none;
+      border: none;
+      color: #828282;
+      font-size: 7pt;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+      font-family: Verdana, Geneva, sans-serif;
+    }
+    .expand-btn:hover { color: #ff6600; }
+
+    .detail-content { display: none; margin-top: 6px; }
+    .detail-content.open { display: block; }
+
+    .discussion-section { margin-bottom: 10px; }
+    .discussion-section h3 {
+      font-size: 8pt;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 2px;
+    }
+    .discussion-section p {
+      font-size: 8pt;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .glossary {
+      margin-top: 8px;
+      padding: 6px 8px;
+      background: #f0ead6;
+      border: 1px solid #ddd;
+    }
+    .glossary h4 {
+      font-size: 7pt;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #828282;
+      margin-bottom: 4px;
+    }
+    .glossary-item { font-size: 8pt; color: #666; margin-bottom: 2px; }
+    .glossary-item strong { color: #000; }
+
+    .loading-detail { font-size: 8pt; color: #828282; padding: 4px 0; }
+
+    @media (max-width: 600px) {
+      body { font-size: 11pt; }
+
+      header { padding: 6px 10px; }
+      header h1 { font-size: 15px; }
+
+      .item { padding: 8px 8px 0 8px; }
+
+      .item-rank { min-width: 22px; font-size: 11pt; }
+
+      .item-title a { font-size: 11pt; line-height: 1.4; }
+      .item-domain { font-size: 9pt; }
+
+      .item-quip { font-size: 9pt; padding-left: 27px; }
+
+      .item-sub {
+        font-size: 9pt;
+        padding-left: 27px;
+        padding-bottom: 3px;
+        line-height: 1.6;
+      }
+
+      .item-summary {
+        font-size: 10pt;
+        margin-left: 27px;
+        padding: 6px 10px;
+        line-height: 1.5;
+      }
+
+      .item-expand { padding-left: 27px; padding-bottom: 6px; }
+
+      .expand-btn {
+        font-size: 9pt;
+        padding: 6px 0;
+      }
+
+      .discussion-section h3 { font-size: 10pt; }
+      .discussion-section p { font-size: 10pt; line-height: 1.5; }
+
+      .glossary-item { font-size: 10pt; }
+      .glossary h4 { font-size: 8pt; }
+
+      .loading-detail { font-size: 10pt; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HN Reader</h1>
+    <span class="header-sub">+ AI summaries</span>
+  </header>
+
+  <main>
+    <div id="status">Loading...</div>
+    <div id="stories"></div>
+  </main>
+
+  <script>
+    const HN = "https://hacker-news.firebaseio.com/v0";
+    const NH = "https://api.newshacker.me";
+    const BATCH = 30;
+
+    let allIds = [];
+    let loaded = 0;
+    let loading = false;
+    const nhCache = {};
+
+    function timeAgo(ts) {
+      const diff = Math.floor(Date.now() / 1000) - ts;
+      if (diff < 60) return `${diff}s ago`;
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      return `${Math.floor(diff / 86400)}d ago`;
+    }
+
+    function domain(url) {
+      if (!url) return null;
+      try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return null; }
+    }
+
+    function esc(s) {
+      if (!s) return "";
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    async function fetchHNItem(id) {
+      const r = await fetch(`${HN}/item/${id}.json`);
+      return r.json();
+    }
+
+    async function fetchNHItem(id) {
+      if (nhCache[id] !== undefined) return nhCache[id];
+      try {
+        const r = await fetch(`${NH}/item/${id}`);
+        if (!r.ok) { nhCache[id] = null; return null; }
+        const data = await r.json();
+        nhCache[id] = data;
+        return data;
+      } catch {
+        nhCache[id] = null;
+        return null;
+      }
+    }
+
+    function renderItem(hn, rank) {
+      const d = domain(hn.url);
+      const el = document.createElement("div");
+      el.id = `item-${hn.id}`;
+      el.innerHTML = `
+        <div class="item">
+          <div class="item-title-row">
+            <span class="item-rank">${rank}.</span>
+            <span class="item-title">
+              <a href="${esc(hn.url || `https://news.ycombinator.com/item?id=${hn.id}`)}" target="_blank" rel="noopener">${esc(hn.title)}</a>${d ? `<span class="item-domain"> (${esc(d)})</span>` : ""}
+            </span>
+          </div>
+          <div class="item-sub">
+            <span class="hl">${hn.score || 0}</span> points by <a href="https://news.ycombinator.com/user?id=${esc(hn.by)}" target="_blank">${esc(hn.by || "?")}</a> ${timeAgo(hn.time)} | <a href="https://news.ycombinator.com/item?id=${hn.id}" target="_blank"><span class="hl">${hn.descendants || 0}</span> comments</a>
+          </div>
+          <div class="item-expand">
+            <button class="expand-btn" data-id="${hn.id}">[show AI discussion summary]</button>
+            <div class="detail-content" id="detail-${hn.id}"></div>
+          </div>
+        </div>`;
+      return el;
+    }
+
+    function enrichItem(id, nh) {
+      const el = document.getElementById(`item-${id}`);
+      if (!el || !nh) return;
+
+      const ai = nh.aisummary || nh.aiSummary || {};
+      const context = ai.context || "";
+      const quip = ai.sarcastic_question || "";
+
+      if (quip) {
+        const titleRow = el.querySelector(".item-title-row");
+        if (titleRow && !el.querySelector(".item-quip")) {
+          titleRow.insertAdjacentHTML("afterend",
+            `<div class="item-quip">${esc(quip)}</div>`);
+        }
+      }
+
+      if (context) {
+        const sub = el.querySelector(".item-sub");
+        if (sub && !el.querySelector(".item-summary")) {
+          sub.insertAdjacentHTML("afterend",
+            `<div class="item-summary">${esc(context)}</div>`);
+        }
+      }
+
+      const expandSection = el.querySelector(".item-expand");
+      if (expandSection) expandSection.classList.add("has-ai");
+    }
+
+    function renderDetail(data) {
+      const ai = data.aisummary || data.aiSummary || {};
+      const overview = ai.discussion_overview || [];
+      const terms = ai.terminologies || [];
+
+      if (!overview.length && !terms.length) {
+        return `<p class="loading-detail">No discussion details available.</p>`;
+      }
+
+      let html = "";
+      if (overview.length) {
+        html += overview.map(s => `
+          <div class="discussion-section">
+            <h3>${esc(s.category)}</h3>
+            <p>${esc(s.summary)}</p>
+          </div>`).join("");
+      }
+      if (terms.length) {
+        html += `<div class="glossary"><h4>Terms</h4>
+          ${terms.map(g => `<div class="glossary-item"><strong>${esc(g.term)}:</strong> ${esc(g.explanation)}</div>`).join("")}
+        </div>`;
+      }
+      return html;
+    }
+
+    async function loadMore() {
+      if (loading || loaded >= allIds.length) return;
+      loading = true;
+      const statusEl = document.getElementById("status");
+      if (loaded === 0) statusEl.textContent = "Loading...";
+
+      const batch = allIds.slice(loaded, loaded + BATCH);
+      const hnItems = await Promise.all(batch.map(fetchHNItem));
+      const container = document.getElementById("stories");
+
+      hnItems.forEach((item, i) => {
+        if (item && !item.deleted && !item.dead) {
+          container.appendChild(renderItem(item, loaded + i + 1));
+        }
+      });
+
+      loaded += batch.length;
+      statusEl.textContent = "";
+      loading = false;
+
+      hnItems.forEach(item => {
+        if (!item || item.deleted || item.dead) return;
+        fetchNHItem(item.id).then(nh => {
+          if (nh) enrichItem(item.id, nh);
+        });
+      });
+    }
+
+    document.getElementById("stories").addEventListener("click", async (e) => {
+      const btn = e.target.closest(".expand-btn");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const container = document.getElementById(`detail-${id}`);
+      if (container.classList.contains("open")) {
+        container.classList.remove("open");
+        btn.textContent = "[show AI discussion summary]";
+        return;
+      }
+      btn.textContent = "[loading...]";
+      btn.disabled = true;
+      try {
+        const data = await fetchNHItem(id);
+        if (data) {
+          container.innerHTML = renderDetail(data);
+        } else {
+          container.innerHTML = `<p class="loading-detail">No AI summary available.</p>`;
+        }
+        container.classList.add("open");
+        btn.textContent = "[hide AI discussion summary]";
+      } catch {
+        container.innerHTML = `<p class="loading-detail">Failed to load.</p>`;
+        container.classList.add("open");
+        btn.textContent = "[hide AI discussion summary]";
+      }
+      btn.disabled = false;
+    });
+
+    window.addEventListener("scroll", () => {
+      if (loaded < allIds.length && window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+        loadMore();
+      }
+    });
+
+    (async () => {
+      const r = await fetch(`${HN}/topstories.json`);
+      allIds = await r.json();
+      await loadMore();
+    })();
+  </script>
+</body>
+</html>
