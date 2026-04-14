@@ -331,7 +331,7 @@
             </span>
           </div>
           <div class="item-footer">
-            <button class="expand-btn" data-id="${hn.id}">summary</button>
+            <button class="expand-btn" data-id="${hn.id}">more</button>
             <span class="item-sub">
               <span class="hl">${hn.score || 0}</span> points ${timeAgo(hn.time)} | <a href="https://news.ycombinator.com/item?id=${hn.id}" target="_blank"><span class="hl">${hn.descendants || 0}</span> comments</a>
             </span>
@@ -431,7 +431,7 @@
       const container = document.getElementById(`detail-${id}`);
       if (container.classList.contains("open")) {
         container.classList.remove("open");
-        btn.textContent = "summary";
+        btn.textContent = "more";
         return;
       }
       btn.textContent = "loading...";
@@ -444,11 +444,11 @@
           container.innerHTML = `<p class="loading-detail">No AI summary available.</p>`;
         }
         container.classList.add("open");
-        btn.textContent = "hide summary";
+        btn.textContent = "less";
       } catch {
         container.innerHTML = `<p class="loading-detail">Failed to load.</p>`;
         container.classList.add("open");
-        btn.textContent = "hide summary";
+        btn.textContent = "less";
       }
       btn.disabled = false;
     });
