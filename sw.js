@@ -32,8 +32,14 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Shell: cache first, fall back to network
+  // Shell: network first, fall back to cache (so updates arrive without reinstall)
   e.respondWith(
-    caches.match(e.request).then((r) => r || fetch(e.request))
+    fetch(e.request)
+      .then((r) => {
+        const clone = r.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, clone));
+        return r;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
