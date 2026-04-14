@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>hnhn</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ff6600">
+  <meta name="theme-color" content="#ff6600" id="meta-theme">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="icon-192.png">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* ── Base / HN theme (default) ── */
     body {
       font-family: Verdana, Geneva, sans-serif;
       background: #f6f6ef;
@@ -26,14 +27,15 @@
       align-items: center;
       gap: 10px;
     }
-    header h1 {
-      font-size: 13px;
-      color: #000;
-      font-weight: 700;
-    }
+    header h1 { font-size: 13px; color: #000; font-weight: 700; }
     .header-sub { font-size: 10px; color: #000; opacity: 0.6; }
-    .refresh-btn {
+    .header-right {
       margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .refresh-btn, .theme-btn {
       background: none;
       border: none;
       color: #000;
@@ -43,7 +45,7 @@
       opacity: 0.6;
       padding: 2px 6px;
     }
-    .refresh-btn:hover { opacity: 1; }
+    .refresh-btn:hover, .theme-btn:hover { opacity: 1; }
 
     #pull-indicator {
       text-align: center;
@@ -54,21 +56,14 @@
       transition: height 0.2s;
     }
 
-    main {
-      max-width: 850px;
-      margin: 0 auto;
-    }
+    main { max-width: 850px; margin: 0 auto; }
 
     #status { padding: 5px 10px; color: #828282; font-size: 10pt; }
     #status:empty { display: none; }
 
     .item { padding: 5px 10px 0 10px; }
 
-    .item-title-row {
-      display: flex;
-      align-items: baseline;
-      gap: 5px;
-    }
+    .item-title-row { display: flex; align-items: baseline; gap: 5px; }
     .item-rank {
       color: #828282;
       font-size: 10pt;
@@ -76,18 +71,10 @@
       text-align: right;
       flex-shrink: 0;
     }
-    .item-title a {
-      font-size: 10pt;
-      color: #000;
-      text-decoration: none;
-    }
+    .item-title a { font-size: 10pt; color: #000; text-decoration: none; }
     .item-title a:visited { color: #828282; }
     .item-title a:hover { text-decoration: underline; }
-    .item-domain {
-      font-size: 8pt;
-      color: #828282;
-      margin-left: 3px;
-    }
+    .item-domain { font-size: 8pt; color: #828282; margin-left: 3px; }
 
     .item-sub {
       font-size: 7pt;
@@ -146,11 +133,7 @@
       color: #000;
       margin-bottom: 2px;
     }
-    .discussion-section p {
-      font-size: 8pt;
-      color: #666;
-      line-height: 1.5;
-    }
+    .discussion-section p { font-size: 8pt; color: #666; line-height: 1.5; }
 
     .glossary {
       margin-top: 8px;
@@ -170,57 +153,87 @@
 
     .loading-detail { font-size: 8pt; color: #828282; padding: 4px 0; }
 
+    /* ── Mobile ── */
     @media (max-width: 600px) {
       body { font-size: 11pt; }
-
       header { padding: 6px 10px; }
       header h1 { font-size: 15px; }
-
       .item { padding: 8px 8px 0 8px; }
-
       .item-rank { min-width: 22px; font-size: 11pt; }
-
       .item-title a { font-size: 11pt; line-height: 1.4; }
       .item-domain { font-size: 9pt; }
-
       .item-quip { font-size: 9pt; padding-left: 27px; }
-
-      .item-sub {
-        font-size: 9pt;
-        padding-left: 27px;
-        padding-bottom: 3px;
-        line-height: 1.6;
-      }
-
-      .item-summary {
-        font-size: 10pt;
-        margin-left: 27px;
-        padding: 6px 10px;
-        line-height: 1.5;
-      }
-
+      .item-sub { font-size: 9pt; padding-left: 27px; padding-bottom: 3px; line-height: 1.6; }
+      .item-summary { font-size: 10pt; margin-left: 27px; padding: 6px 10px; line-height: 1.5; }
       .item-expand { padding-left: 27px; padding-bottom: 6px; }
-
-      .expand-btn {
-        font-size: 9pt;
-        padding: 6px 0;
-      }
-
+      .expand-btn { font-size: 9pt; padding: 6px 0; }
       .discussion-section h3 { font-size: 10pt; }
       .discussion-section p { font-size: 10pt; line-height: 1.5; }
-
       .glossary-item { font-size: 10pt; }
       .glossary h4 { font-size: 8pt; }
-
       .loading-detail { font-size: 10pt; }
     }
+
+    /* ── Dark / newshacker theme ── */
+    body.dark {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #0a0a0a;
+      color: #999;
+    }
+    body.dark header {
+      background: #141414;
+      border-bottom: 1px solid #222;
+    }
+    body.dark header h1 { color: #ff6600; }
+    body.dark .header-sub { color: #666; }
+    body.dark .refresh-btn,
+    body.dark .theme-btn { color: #888; }
+
+    body.dark #pull-indicator { color: #666; }
+    body.dark #status { color: #666; }
+
+    body.dark .item-rank { color: #555; }
+    body.dark .item-title a { color: #ddd; }
+    body.dark .item-title a:visited { color: #888; }
+    body.dark .item-domain { color: #555; }
+
+    body.dark .item-sub { color: #666; }
+    body.dark .item-sub a { color: #666; }
+    body.dark .item-sub .hl { color: #ff6600; }
+
+    body.dark .item-quip { color: #888; }
+
+    body.dark .item-summary {
+      background: #141414;
+      border-left-color: #ff660060;
+      color: #999;
+    }
+
+    body.dark .expand-btn { color: #666; }
+    body.dark .expand-btn:hover { color: #ff6600; }
+
+    body.dark .discussion-section h3 { color: #ff8c00; }
+    body.dark .discussion-section p { color: #999; }
+
+    body.dark .glossary {
+      background: #111;
+      border-color: #222;
+    }
+    body.dark .glossary h4 { color: #555; }
+    body.dark .glossary-item { color: #888; }
+    body.dark .glossary-item strong { color: #ccc; }
+
+    body.dark .loading-detail { color: #555; }
   </style>
 </head>
 <body>
   <header>
     <h1>hnhn</h1>
     <span class="header-sub">+ AI summaries</span>
-    <button class="refresh-btn" id="refresh-btn" title="Refresh">↻ refresh</button>
+    <span class="header-right">
+      <button class="theme-btn" id="theme-btn" title="Switch theme">◑ theme</button>
+      <button class="refresh-btn" id="refresh-btn" title="Refresh">↻ refresh</button>
+    </span>
   </header>
 
   <div id="pull-indicator">↓ release to refresh</div>
@@ -239,6 +252,20 @@
     let loading = false;
     const nhCache = {};
 
+    // ── Theme ──
+    function applyTheme(theme) {
+      document.body.classList.toggle("dark", theme === "dark");
+      document.getElementById("meta-theme").content = theme === "dark" ? "#141414" : "#ff6600";
+      document.getElementById("theme-btn").textContent = theme === "dark" ? "◑ light" : "◑ dark";
+      localStorage.setItem("hnhn-theme", theme);
+    }
+    applyTheme(localStorage.getItem("hnhn-theme") || "light");
+
+    document.getElementById("theme-btn").addEventListener("click", () => {
+      applyTheme(document.body.classList.contains("dark") ? "light" : "dark");
+    });
+
+    // ── Helpers ──
     function timeAgo(ts) {
       const diff = Math.floor(Date.now() / 1000) - ts;
       if (diff < 60) return `${diff}s ago`;
@@ -259,6 +286,7 @@
       return d.innerHTML;
     }
 
+    // ── Data ──
     async function fetchHNItem(id) {
       const r = await fetch(`${HN}/item/${id}.json`);
       return r.json();
@@ -278,6 +306,7 @@
       }
     }
 
+    // ── Render ──
     function renderItem(hn, rank) {
       const d = domain(hn.url);
       const el = document.createElement("div");
@@ -354,6 +383,7 @@
       return html;
     }
 
+    // ── Load ──
     async function loadMore() {
       if (loading || loaded >= allIds.length) return;
       loading = true;
@@ -382,6 +412,7 @@
       });
     }
 
+    // ── Expand ──
     document.getElementById("stories").addEventListener("click", async (e) => {
       const btn = e.target.closest(".expand-btn");
       if (!btn) return;
@@ -411,18 +442,21 @@
       btn.disabled = false;
     });
 
+    // ── Scroll ──
     window.addEventListener("scroll", () => {
       if (loaded < allIds.length && window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
         loadMore();
       }
     });
 
+    // ── Init ──
     (async () => {
       const r = await fetch(`${HN}/topstories.json`);
       allIds = await r.json();
       await loadMore();
     })();
 
+    // ── Refresh ──
     async function refresh() {
       const btn = document.getElementById("refresh-btn");
       btn.textContent = "↻ ...";
@@ -437,7 +471,7 @@
 
     document.getElementById("refresh-btn").addEventListener("click", refresh);
 
-    // Pull-to-refresh for touch
+    // ── Pull-to-refresh ──
     let touchStartY = 0;
     let pulling = false;
     const pullEl = document.getElementById("pull-indicator");
