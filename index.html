@@ -161,6 +161,65 @@
 
     .loading-detail { font-size: 9pt; color: #828282; padding: 5px 0; }
 
+    /* ── Deal card ── */
+    .deal {
+      padding: 10px;
+      border-bottom: 2px solid #e8e8e0;
+      background: #fff8f0;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+    .deal-img {
+      flex-shrink: 0;
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .deal-body { flex: 1; min-width: 0; }
+    .deal-label {
+      font-size: 7pt;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ff6600;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .deal-name a {
+      font-size: 12pt;
+      color: #000;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .deal-name a:hover { text-decoration: underline; }
+    .deal-pricing {
+      margin-top: 4px;
+      font-size: 10pt;
+    }
+    .deal-price {
+      color: #c00;
+      font-weight: 700;
+    }
+    .deal-original {
+      color: #999;
+      text-decoration: line-through;
+      margin-left: 6px;
+      font-size: 9pt;
+    }
+    .deal-savings {
+      color: #228b22;
+      font-weight: 600;
+      margin-left: 6px;
+      font-size: 9pt;
+    }
+    .deal-rating {
+      font-size: 8pt;
+      color: #828282;
+      margin-top: 3px;
+    }
+
     /* ── Mobile ── */
     @media (max-width: 600px) {
       body { font-size: 11pt; }
@@ -182,6 +241,9 @@
       .glossary-item { font-size: 10pt; }
       .glossary h4 { font-size: 8pt; }
       .loading-detail { font-size: 10pt; }
+      .deal { padding: 8px; gap: 10px; }
+      .deal-img { width: 70px; height: 70px; }
+      .deal-name a { font-size: 11pt; }
     }
 
     /* ── Dark / newshacker theme ── */
@@ -235,6 +297,17 @@
     body.dark .glossary-item strong { color: #ccc; }
 
     body.dark .loading-detail { color: #555; }
+
+    body.dark .deal {
+      background: #1a1400;
+      border-bottom-color: #2a2a2a;
+    }
+    body.dark .deal-img { background: #111; }
+    body.dark .deal-name a { color: #ddd; }
+    body.dark .deal-price { color: #ff4444; }
+    body.dark .deal-original { color: #666; }
+    body.dark .deal-savings { color: #4caf50; }
+    body.dark .deal-rating { color: #666; }
   </style>
 </head>
 <body>
@@ -256,6 +329,7 @@
   <script>
     const HN = "https://hacker-news.firebaseio.com/v0";
     const NH = "https://api.newshacker.me";
+    const MF = "https://www.musiciansfriend.com";
     const BATCH = 30;
 
     let allIds = [];
@@ -295,6 +369,41 @@
       const d = document.createElement("div");
       d.textContent = s;
       return d.innerHTML;
+    }
+
+    // ── Deal ──
+    async function loadDeal() {
+      try {
+        const dealUrl = `${MF}/rest/model/ngp/rest/actor/SearchActor/emTemplateJSON?includePath=/pages/AppHeadlinerDeals`;
+        const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(dealUrl)}`);
+        if (!r.ok) return;
+        const data = await r.json();
+        const sections = data.emPageData?.Section || [];
+        const prodSection = sections.find(s => s.products?.length);
+        if (!prodSection) return;
+        const p = prodSection.products[0];
+        const imgUrl = p.thumb?.replace("120x120", "600x600") || p.thumb || "";
+        const link = p.path ? `${MF}${p.path}` : `${MF}/stupid/`;
+        const stars = p.rating ? "★".repeat(Math.round(p.rating / 2)) + "☆".repeat(5 - Math.round(p.rating / 2)) : "";
+        const el = document.createElement("div");
+        el.className = "deal";
+        el.innerHTML = `
+          <a href="${esc(link)}" target="_blank" rel="noopener">
+            <img class="deal-img" src="${esc(imgUrl)}" alt="${esc(p.name || "")}">
+          </a>
+          <div class="deal-body">
+            <div class="deal-label">Stupid Deal of the Day</div>
+            <div class="deal-name"><a href="${esc(link)}" target="_blank" rel="noopener">${esc(p.name || p.displayName || "")}</a></div>
+            <div class="deal-pricing">
+              <span class="deal-price">${esc(p.price || "")}</span>
+              ${p.regularPrice ? `<span class="deal-original">${esc(p.regularPrice)}</span>` : ""}
+              ${p.savings ? `<span class="deal-savings">save ${esc(p.savings)}</span>` : ""}
+            </div>
+            ${stars || p.reviews ? `<div class="deal-rating">${stars}${p.reviews ? ` (${p.reviews} reviews)` : ""}</div>` : ""}
+          </div>`;
+        const container = document.getElementById("stories");
+        container.insertBefore(el, container.firstChild);
+      } catch {}
     }
 
     // ── Data ──
@@ -465,6 +574,7 @@
       const r = await fetch(`${HN}/topstories.json`);
       allIds = await r.json();
       await loadMore();
+      loadDeal();
     })();
 
     // ── Refresh ──
@@ -477,6 +587,7 @@
       const r = await fetch(`${HN}/topstories.json`);
       allIds = await r.json();
       await loadMore();
+      loadDeal();
       btn.textContent = "↻ refresh";
     }
 
