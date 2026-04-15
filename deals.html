@@ -110,12 +110,25 @@
       return d.innerHTML;
     }
 
+    async function fetchViaProxy(url) {
+      const proxies = [
+        (u) => `https://proxy.killcors.com?url=${encodeURIComponent(u)}`,
+        (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+      ];
+      for (const proxy of proxies) {
+        try {
+          const r = await fetch(proxy(url), { signal: AbortSignal.timeout(8000) });
+          if (r.ok) return await r.json();
+        } catch {}
+      }
+      return null;
+    }
+
     (async () => {
       try {
         const dealUrl = `${MF}/rest/model/ngp/rest/actor/SearchActor/emTemplateJSON?includePath=/pages/AppHeadlinerDeals`;
-        const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(dealUrl)}`);
-        if (!r.ok) throw new Error();
-        const data = await r.json();
+        const data = await fetchViaProxy(dealUrl);
+        if (!data) throw new Error();
         const sections = data.emPageData?.Section || [];
         const prodSection = sections.find(s => s.products?.length);
         if (!prodSection) throw new Error();
@@ -139,7 +152,7 @@
             <a class="deal-link" href="${esc(link)}" target="_blank" rel="noopener">View on Musician's Friend</a>
           </div>`;
       } catch {
-        document.getElementById("status").textContent = "Could not load deal.";
+        document.getElementById("status").innerHTML = 'Could not load deal. <a href="https://www.musiciansfriend.com/stupid/" target="_blank" style="color:#ff6600">View on musiciansfriend.com</a>';
       }
     })();
   </script>
