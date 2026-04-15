@@ -84,18 +84,18 @@
     .item-domain { font-size: 9pt; color: #828282; margin-left: 4px; }
 
     .item-zh {
-      font-size: 10pt;
-      color: #555;
+      font-size: 9pt;
+      color: #666;
       padding-left: 38px;
-      padding-top: 2px;
+      padding-top: 3px;
+      padding-bottom: 2px;
     }
 
     .item-quip {
       font-size: 9pt;
       color: #888;
-      padding-left: 38px;
-      padding-top: 3px;
-      padding-bottom: 3px;
+      font-weight: 600;
+      margin-bottom: 4px;
     }
 
     .item-summary {
@@ -185,8 +185,7 @@
       .item-rank { min-width: 24px; font-size: 11pt; }
       .item-title a { font-size: 12pt; line-height: 1.4; }
       .item-domain { font-size: 9pt; }
-      .item-zh { font-size: 11pt; padding-left: 30px; }
-      .item-quip { font-size: 10pt; padding-left: 30px; }
+      .item-zh { font-size: 10pt; padding-left: 30px; }
       .item-footer { padding-left: 30px; flex-wrap: wrap; }
       .item-sub { font-size: 9pt; }
       .item-summary { font-size: 10pt; margin-left: 30px; padding: 6px 10px; line-height: 1.6; }
@@ -229,7 +228,7 @@
     body.dark .item-sub .hl { color: #ff6600; }
 
     body.dark .item-zh { color: #999; }
-    body.dark .item-quip { color: #666; }
+    body.dark .item-quip { color: #bbb; }
 
     body.dark .item-summary {
       background: #141414;
@@ -368,25 +367,21 @@
       const quip = ai.sarcastic_question || "";
       const zhTitle = ai.chinese_title || "";
 
-      const titleRow = el.querySelector(".item-title-row");
-      if (titleRow) {
-        let after = titleRow;
-        if (zhTitle && !el.querySelector(".item-zh")) {
-          after.insertAdjacentHTML("afterend",
+      if (zhTitle) {
+        const titleRow = el.querySelector(".item-title-row");
+        if (titleRow && !el.querySelector(".item-zh")) {
+          titleRow.insertAdjacentHTML("afterend",
             `<div class="item-zh">${esc(zhTitle)}</div>`);
-          after = el.querySelector(".item-zh");
-        }
-        if (quip && !el.querySelector(".item-quip")) {
-          after.insertAdjacentHTML("afterend",
-            `<div class="item-quip">${esc(quip)}</div>`);
         }
       }
 
-      if (context) {
+      if (context || quip) {
         const footer = el.querySelector(".item-footer");
         if (footer && !el.querySelector(".item-summary")) {
+          const inner = (quip ? `<div class="item-quip">${esc(quip)}</div>` : "")
+            + (context ? esc(context) : "");
           footer.insertAdjacentHTML("beforebegin",
-            `<div class="item-summary">${esc(context)}</div>`);
+            `<div class="item-summary">${inner}</div>`);
         }
       }
 
