@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hnhn - deals</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Verdana, Geneva, sans-serif;
+      background: #f6f6ef;
+      color: #828282;
+      font-size: 10pt;
+    }
+    header {
+      background: #ff6600;
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header h1 { font-size: 14px; color: #000; font-weight: 700; }
+    header h1 a { color: #000; text-decoration: none; }
+    header h1 a:hover { text-decoration: underline; }
+    .header-sub { font-size: 10px; color: #000; opacity: 0.6; }
+
+    main { max-width: 85%; margin: 0 auto; padding: 16px 10px; }
+
+    #status { color: #828282; font-size: 10pt; }
+
+    .deal {
+      padding: 16px 0;
+      border-bottom: 1px solid #e8e8e0;
+    }
+    .deal-title a {
+      font-size: 14pt;
+      color: #000;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .deal-title a:hover { text-decoration: underline; }
+    .deal-source {
+      font-size: 9pt;
+      color: #828282;
+      margin-top: 2px;
+    }
+    .deal-pricing {
+      margin-top: 8px;
+      font-size: 12pt;
+    }
+    .deal-price { color: #000; font-weight: 700; }
+    .deal-original {
+      color: #999;
+      text-decoration: line-through;
+      margin-left: 6px;
+      font-size: 10pt;
+    }
+    .deal-savings {
+      color: #228b22;
+      font-weight: 600;
+      margin-left: 8px;
+      font-size: 10pt;
+    }
+    .deal-img-container { margin-top: 10px; }
+    .deal-img {
+      max-width: 300px;
+      max-height: 300px;
+      object-fit: contain;
+    }
+    .deal-rating {
+      font-size: 9pt;
+      color: #828282;
+      margin-top: 6px;
+    }
+    .deal-link {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 9pt;
+      color: #ff6600;
+      text-decoration: underline;
+    }
+    .deal-link:hover { color: #000; }
+
+    @media (max-width: 600px) {
+      main { max-width: 100%; padding: 12px 8px; }
+      .deal-title a { font-size: 12pt; }
+      .deal-pricing { font-size: 11pt; }
+      .deal-img { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="index.html">hnhn</a></h1>
+    <span class="header-sub">/ deals</span>
+  </header>
+
+  <main>
+    <div id="status">Loading deal...</div>
+    <div id="deal"></div>
+  </main>
+
+  <script>
+    const MF = "https://www.musiciansfriend.com";
+
+    function esc(s) {
+      if (!s) return "";
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    (async () => {
+      try {
+        const dealUrl = `${MF}/rest/model/ngp/rest/actor/SearchActor/emTemplateJSON?includePath=/pages/AppHeadlinerDeals`;
+        const r = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(dealUrl)}`);
+        if (!r.ok) throw new Error();
+        const data = await r.json();
+        const sections = data.emPageData?.Section || [];
+        const prodSection = sections.find(s => s.products?.length);
+        if (!prodSection) throw new Error();
+        const p = prodSection.products[0];
+        const link = p.path ? `${MF}${p.path}` : `${MF}/stupid/`;
+        const imgUrl = p.thumb?.replace("120x120", "600x600") || p.thumb || "";
+        const stars = p.rating ? "\u2605".repeat(Math.round(p.rating / 2)) + "\u2606".repeat(5 - Math.round(p.rating / 2)) : "";
+
+        document.getElementById("status").textContent = "";
+        document.getElementById("deal").innerHTML = `
+          <div class="deal">
+            <div class="deal-title"><a href="${esc(link)}" target="_blank" rel="noopener">${esc(p.name || p.displayName || "")}</a></div>
+            <div class="deal-source">Musician's Friend - Stupid Deal of the Day</div>
+            <div class="deal-pricing">
+              <span class="deal-price">${esc(p.price || "")}</span>
+              ${p.regularPrice ? `<span class="deal-original">${esc(p.regularPrice)}</span>` : ""}
+              ${p.savings ? `<span class="deal-savings">save ${esc(p.savings)}</span>` : ""}
+            </div>
+            ${imgUrl ? `<div class="deal-img-container"><a href="${esc(link)}" target="_blank" rel="noopener"><img class="deal-img" src="${esc(imgUrl)}" alt="${esc(p.name || "")}"></a></div>` : ""}
+            ${stars || p.reviews ? `<div class="deal-rating">${stars}${p.reviews ? ` (${p.reviews} reviews)` : ""}</div>` : ""}
+            <a class="deal-link" href="${esc(link)}" target="_blank" rel="noopener">View on Musician's Friend</a>
+          </div>`;
+      } catch {
+        document.getElementById("status").textContent = "Could not load deal.";
+      }
+    })();
+  </script>
+</body>
+</html>

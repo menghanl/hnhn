@@ -45,6 +45,13 @@
       opacity: 0.6;
       padding: 2px 6px;
     }
+    .header-link {
+      font-size: 10px;
+      color: #000;
+      opacity: 0.6;
+      text-decoration: none;
+    }
+    .header-link:hover { opacity: 1; }
     .refresh-btn:hover, .theme-btn:hover { opacity: 1; }
 
     #pull-indicator {
@@ -198,6 +205,7 @@
     body.dark .header-sub { color: #666; }
     body.dark .refresh-btn,
     body.dark .theme-btn { color: #888; }
+    body.dark .header-link { color: #888; }
 
     body.dark #pull-indicator { color: #666; }
     body.dark #status { color: #666; }
@@ -241,6 +249,7 @@
   <header>
     <h1>hnhn</h1>
     <span class="header-sub">+ AI summaries</span>
+    <a class="header-link" href="deals.html">deals</a>
     <span class="header-right">
       <button class="theme-btn" id="theme-btn" title="Switch theme">◑ theme</button>
       <button class="refresh-btn" id="refresh-btn" title="Refresh">↻ refresh</button>
