@@ -83,11 +83,18 @@
     .item-title a:hover { text-decoration: underline; }
     .item-domain { font-size: 9pt; color: #828282; margin-left: 4px; }
 
+    .item-zh {
+      font-size: 10pt;
+      color: #555;
+      padding-left: 38px;
+      padding-top: 2px;
+    }
+
     .item-quip {
       font-size: 9pt;
-      color: #666;
+      color: #888;
       padding-left: 38px;
-      padding-top: 4px;
+      padding-top: 3px;
       padding-bottom: 3px;
     }
 
@@ -178,6 +185,7 @@
       .item-rank { min-width: 24px; font-size: 11pt; }
       .item-title a { font-size: 12pt; line-height: 1.4; }
       .item-domain { font-size: 9pt; }
+      .item-zh { font-size: 11pt; padding-left: 30px; }
       .item-quip { font-size: 10pt; padding-left: 30px; }
       .item-footer { padding-left: 30px; flex-wrap: wrap; }
       .item-sub { font-size: 9pt; }
@@ -220,7 +228,8 @@
     body.dark .item-sub a { color: #666; }
     body.dark .item-sub .hl { color: #ff6600; }
 
-    body.dark .item-quip { color: #888; }
+    body.dark .item-zh { color: #999; }
+    body.dark .item-quip { color: #666; }
 
     body.dark .item-summary {
       background: #141414;
@@ -357,11 +366,18 @@
       const ai = nh.aisummary || nh.aiSummary || {};
       const context = ai.context || "";
       const quip = ai.sarcastic_question || "";
+      const zhTitle = ai.chinese_title || "";
 
-      if (quip) {
-        const titleRow = el.querySelector(".item-title-row");
-        if (titleRow && !el.querySelector(".item-quip")) {
-          titleRow.insertAdjacentHTML("afterend",
+      const titleRow = el.querySelector(".item-title-row");
+      if (titleRow) {
+        let after = titleRow;
+        if (zhTitle && !el.querySelector(".item-zh")) {
+          after.insertAdjacentHTML("afterend",
+            `<div class="item-zh">${esc(zhTitle)}</div>`);
+          after = el.querySelector(".item-zh");
+        }
+        if (quip && !el.querySelector(".item-quip")) {
+          after.insertAdjacentHTML("afterend",
             `<div class="item-quip">${esc(quip)}</div>`);
         }
       }
