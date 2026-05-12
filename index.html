@@ -88,7 +88,7 @@
       font-size: 9pt;
       color: #888;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
 
     .item-summary {
@@ -367,13 +367,11 @@
         }
       }
 
-      if (context || quip) {
+      if (context) {
         const footer = el.querySelector(".item-footer");
         if (footer && !el.querySelector(".item-summary")) {
-          const inner = (quip ? `<div class="item-quip">${esc(quip)}</div>` : "")
-            + (context ? esc(context) : "");
           footer.insertAdjacentHTML("beforebegin",
-            `<div class="item-summary">${inner}</div>`);
+            `<div class="item-summary">${esc(context)}</div>`);
         }
       }
 
@@ -385,12 +383,16 @@
       const ai = data.aisummary || data.aiSummary || {};
       const overview = ai.discussion_overview || [];
       const terms = ai.terminologies || [];
+      const quip = ai.sarcastic_question || "";
 
-      if (!overview.length && !terms.length) {
+      if (!overview.length && !terms.length && !quip) {
         return `<p class="loading-detail">No discussion details available.</p>`;
       }
 
       let html = "";
+      if (quip) {
+        html += `<div class="item-quip">${esc(quip)}</div>`;
+      }
       if (overview.length) {
         html += overview.map(s => `
           <div class="discussion-section">
