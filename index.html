@@ -294,7 +294,8 @@
       const theme = resolveTheme(pref);
       document.body.classList.toggle("dark", theme === "dark");
       document.getElementById("meta-theme").content = theme === "dark" ? "#141414" : "#ff6600";
-      const nextLabel = pref === "system" ? "◑ light" : pref === "light" ? "◑ dark" : "◑ auto";
+      // Label is the next mode on click (system → light → dark → system)
+      const nextLabel = pref === "system" ? "◑ light" : pref === "light" ? "◑ dark" : "◑ system";
       document.getElementById("theme-btn").textContent = nextLabel;
       document.getElementById("theme-btn").title =
         pref === "system" ? "Theme: system (click for light)" :
