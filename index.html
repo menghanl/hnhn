@@ -282,6 +282,10 @@
 
     // ── Theme ──
     // Preference: "system" | "light" | "dark". Default follows OS.
+    // v2 key: old code always wrote "light"/"dark" and locked users off system.
+    const THEME_KEY = "hnhn-theme-v2";
+    try { localStorage.removeItem("hnhn-theme"); } catch (_) {}
+
     function systemTheme() {
       return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     }
@@ -294,31 +298,32 @@
       const theme = resolveTheme(pref);
       document.body.classList.toggle("dark", theme === "dark");
       document.getElementById("meta-theme").content = theme === "dark" ? "#141414" : "#ff6600";
-      // Label is the next mode on click (system → light → dark → system)
-      const nextLabel = pref === "system" ? "◑ light" : pref === "light" ? "◑ dark" : "◑ system";
-      document.getElementById("theme-btn").textContent = nextLabel;
+      // Label is the *current* preference (click cycles system → light → dark)
+      document.getElementById("theme-btn").textContent =
+        pref === "system" ? "◑ system" : pref === "light" ? "◑ light" : "◑ dark";
       document.getElementById("theme-btn").title =
-        pref === "system" ? "Theme: system (click for light)" :
-        pref === "light" ? "Theme: light (click for dark)" :
-        "Theme: dark (click for system)";
-      localStorage.setItem("hnhn-theme", pref);
+        pref === "system"
+          ? `Theme: system (${theme}) — click for light`
+          : pref === "light"
+            ? "Theme: light — click for dark"
+            : "Theme: dark — click for system";
+      localStorage.setItem(THEME_KEY, pref);
     }
 
-    let themePref = localStorage.getItem("hnhn-theme");
-    // Migrate: treat missing or legacy values; unknown → system
+    let themePref = localStorage.getItem(THEME_KEY);
     if (themePref !== "light" && themePref !== "dark" && themePref !== "system") {
       themePref = "system";
     }
     applyTheme(themePref);
 
     document.getElementById("theme-btn").addEventListener("click", () => {
-      const cur = localStorage.getItem("hnhn-theme") || "system";
+      const cur = localStorage.getItem(THEME_KEY) || "system";
       const next = cur === "system" ? "light" : cur === "light" ? "dark" : "system";
       applyTheme(next);
     });
 
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-      if ((localStorage.getItem("hnhn-theme") || "system") === "system") {
+      if ((localStorage.getItem(THEME_KEY) || "system") === "system") {
         applyTheme("system");
       }
     });

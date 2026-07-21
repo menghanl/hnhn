@@ -1,4 +1,4 @@
-const CACHE = "hnhn-v1";
+const CACHE = "hnhn-v2";
 const SHELL = ["/hnhn/", "/hnhn/index.html", "/hnhn/manifest.json"];
 
 self.addEventListener("install", (e) => {
