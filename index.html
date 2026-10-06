@@ -266,8 +266,8 @@
 
   <div id="pull-indicator">↓ release to refresh</div>
   <main>
-    <div id="status">Loading...</div>
     <div id="stories"></div>
+    <div id="status">Loading...</div>
   </main>
 
   <script>
@@ -278,6 +278,7 @@
     let allIds = [];
     let loaded = 0;
     let loading = false;
+    let gen = 0; // bumped on each refresh so in-flight loads can detect they are stale
     const nhCache = {};
 
     // ── Theme ──
@@ -307,25 +308,24 @@
           : pref === "light"
             ? "Theme: light — click for dark"
             : "Theme: dark — click for system";
-      localStorage.setItem(THEME_KEY, pref);
+      themePref = pref;
+      try { localStorage.setItem(THEME_KEY, pref); } catch (_) {}
     }
 
-    let themePref = localStorage.getItem(THEME_KEY);
+    let themePref = null;
+    try { themePref = localStorage.getItem(THEME_KEY); } catch (_) {}
     if (themePref !== "light" && themePref !== "dark" && themePref !== "system") {
       themePref = "system";
     }
     applyTheme(themePref);
 
     document.getElementById("theme-btn").addEventListener("click", () => {
-      const cur = localStorage.getItem(THEME_KEY) || "system";
-      const next = cur === "system" ? "light" : cur === "light" ? "dark" : "system";
+      const next = themePref === "system" ? "light" : themePref === "light" ? "dark" : "system";
       applyTheme(next);
     });
 
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-      if ((localStorage.getItem(THEME_KEY) || "system") === "system") {
-        applyTheme("system");
-      }
+      if (themePref === "system") applyTheme("system");
     });
 
     // ── Helpers ──
@@ -342,29 +342,44 @@
       try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return null; }
     }
 
+    // Escapes quotes too, so the result is safe inside attribute values.
     function esc(s) {
-      if (!s) return "";
-      const d = document.createElement("div");
-      d.textContent = s;
-      return d.innerHTML;
+      if (s == null) return "";
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+      })[c]);
+    }
+
+    function safeUrl(url, fallback) {
+      try {
+        const u = new URL(url);
+        if (u.protocol === "http:" || u.protocol === "https:") return u.href;
+      } catch {}
+      return fallback;
     }
 
     // ── Data ──
     async function fetchHNItem(id) {
       const r = await fetch(`${HN}/item/${id}.json`);
+      if (!r.ok) throw new Error(`HN item ${id}: ${r.status}`);
       return r.json();
     }
 
+    function aiOf(data) {
+      return (data && data.aiSummary) || null;
+    }
+
+    // Caches only finished summaries. New stories often have a null summary
+    // at first, so those are fetched again on expand and on refresh.
     async function fetchNHItem(id) {
-      if (nhCache[id] !== undefined) return nhCache[id];
+      if (nhCache[id]) return nhCache[id];
       try {
         const r = await fetch(`${NH}/item/${id}`);
-        if (!r.ok) { nhCache[id] = null; return null; }
+        if (!r.ok) return null;
         const data = await r.json();
-        nhCache[id] = data;
+        if (aiOf(data)) nhCache[id] = data;
         return data;
       } catch {
-        nhCache[id] = null;
         return null;
       }
     }
@@ -372,6 +387,7 @@
     // ── Render ──
     function renderItem(hn, rank) {
       const d = domain(hn.url);
+      const hnLink = `https://news.ycombinator.com/item?id=${hn.id}`;
       const el = document.createElement("div");
       el.id = `item-${hn.id}`;
       el.innerHTML = `
@@ -379,7 +395,7 @@
           <div class="item-title-row">
             <span class="item-rank">${rank}.</span>
             <span class="item-title">
-              <a href="${esc(hn.url || `https://news.ycombinator.com/item?id=${hn.id}`)}" target="_blank" rel="noopener">${esc(hn.title)}</a>${d ? `<span class="item-domain"> (${esc(d)})</span>` : ""}
+              <a href="${esc(safeUrl(hn.url, hnLink))}" target="_blank" rel="noopener">${esc(hn.title)}</a>${d ? `<span class="item-domain"> (${esc(d)})</span>` : ""}
             </span>
           </div>
           <div class="item-footer">
@@ -395,11 +411,10 @@
 
     function enrichItem(id, nh) {
       const el = document.getElementById(`item-${id}`);
-      if (!el || !nh) return;
+      const ai = aiOf(nh);
+      if (!el || !ai) return;
 
-      const ai = nh.aisummary || nh.aiSummary || {};
       const context = ai.context || "";
-      const quip = ai.sarcastic_question || "";
       const zhTitle = ai.chinese_title || "";
 
       if (zhTitle) {
@@ -423,7 +438,7 @@
     }
 
     function renderDetail(data) {
-      const ai = data.aisummary || data.aiSummary || {};
+      const ai = aiOf(data) || {};
       const overview = ai.discussion_overview || [];
       const terms = ai.terminologies || [];
       const quip = ai.sarcastic_question || "";
@@ -452,25 +467,49 @@
     }
 
     // ── Load ──
+    function showError(msg) {
+      document.getElementById("status").innerHTML =
+        `${esc(msg)} <a href="#" id="retry-link">retry</a>`;
+    }
+
+    document.getElementById("status").addEventListener("click", (e) => {
+      if (e.target.id !== "retry-link") return;
+      e.preventDefault();
+      if (allIds.length) loadMore(); else refresh();
+    });
+
     async function loadMore() {
       if (loading || loaded >= allIds.length) return;
+      const myGen = gen;
       loading = true;
       const statusEl = document.getElementById("status");
-      if (loaded === 0) statusEl.textContent = "Loading...";
+      statusEl.textContent = "Loading...";
 
-      const batch = allIds.slice(loaded, loaded + BATCH);
-      const hnItems = await Promise.all(batch.map(fetchHNItem));
+      const start = loaded;
+      const batch = allIds.slice(start, start + BATCH);
+      let hnItems;
+      try {
+        hnItems = await Promise.all(batch.map((id) => fetchHNItem(id).catch(() => null)));
+      } finally {
+        if (myGen === gen) loading = false;
+      }
+      // A refresh started while this batch was loading; drop the stale batch.
+      if (myGen !== gen) return;
+
+      if (hnItems.every((item) => !item)) {
+        showError("Failed to load stories.");
+        return;
+      }
+
       const container = document.getElementById("stories");
-
       hnItems.forEach((item, i) => {
         if (item && !item.deleted && !item.dead) {
-          container.appendChild(renderItem(item, loaded + i + 1));
+          container.appendChild(renderItem(item, start + i + 1));
         }
       });
 
-      loaded += batch.length;
+      loaded = start + batch.length;
       statusEl.textContent = "";
-      loading = false;
 
       hnItems.forEach(item => {
         if (!item || item.deleted || item.dead) return;
@@ -517,27 +556,44 @@
       }
     });
 
-    // ── Init ──
-    (async () => {
-      const r = await fetch(`${HN}/topstories.json`);
-      allIds = await r.json();
-      await loadMore();
-    })();
-
-    // ── Refresh ──
-    async function refresh() {
-      const btn = document.getElementById("refresh-btn");
-      btn.textContent = "↻ ...";
+    // ── Load top stories (init + refresh) ──
+    async function loadTop() {
+      const myGen = ++gen;
+      loading = false;
       loaded = 0;
       allIds = [];
       document.getElementById("stories").innerHTML = "";
-      const r = await fetch(`${HN}/topstories.json`);
-      allIds = await r.json();
+      document.getElementById("status").textContent = "Loading...";
+      let ids;
+      try {
+        const r = await fetch(`${HN}/topstories.json`);
+        if (!r.ok) throw new Error(`topstories: ${r.status}`);
+        ids = await r.json();
+      } catch {
+        if (myGen === gen) showError("Failed to load stories.");
+        return;
+      }
+      if (myGen !== gen) return;
+      allIds = ids;
       await loadMore();
-      btn.textContent = "↻ refresh";
+    }
+
+    let refreshing = false;
+    async function refresh() {
+      if (refreshing) return;
+      refreshing = true;
+      const btn = document.getElementById("refresh-btn");
+      btn.textContent = "↻ ...";
+      try {
+        await loadTop();
+      } finally {
+        refreshing = false;
+        btn.textContent = "↻ refresh";
+      }
     }
 
     document.getElementById("refresh-btn").addEventListener("click", refresh);
+    refresh();
 
     // ── Pull-to-refresh ──
     let touchStartY = 0;
