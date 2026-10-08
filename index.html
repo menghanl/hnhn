@@ -14,9 +14,9 @@
 
     /* ── Base / HN theme (default) ── */
     body {
-      font-family: Verdana, Geneva, "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      font-family: Verdana, Geneva, sans-serif;
       background: #f6f6ef;
-      color: #6a6a6a;
+      color: #828282;
       font-size: 10pt;
     }
 
@@ -26,58 +26,55 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
     }
     header h1 { font-size: 14px; color: #000; font-weight: 700; }
-    .header-sub { font-size: 10px; color: #000; opacity: 0.75; white-space: nowrap; }
+    .header-sub { font-size: 10px; color: #000; opacity: 0.6; }
     .header-right {
       margin-left: auto;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .hdr-btn {
+    .refresh-btn, .theme-btn {
       background: none;
       border: none;
       color: #000;
       font-size: 12px;
       font-family: Verdana, Geneva, sans-serif;
       cursor: pointer;
-      opacity: 0.75;
+      opacity: 0.6;
       padding: 2px 6px;
-      white-space: nowrap;
     }
-    .hdr-btn:hover, .hdr-btn[aria-pressed="true"] { opacity: 1; }
-    .hdr-btn[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 3px; }
+    .refresh-btn:hover, .theme-btn:hover { opacity: 1; }
 
     #pull-indicator {
       text-align: center;
       font-size: 8pt;
-      color: #6a6a6a;
+      color: #828282;
       overflow: hidden;
       height: 0;
       transition: height 0.2s;
     }
 
-    main { max-width: 760px; margin: 0 auto; }
+    main { max-width: 85%; margin: 0 auto; }
 
-    #status { padding: 5px 10px; color: #6a6a6a; font-size: 10pt; }
+    #status { padding: 5px 10px; color: #828282; font-size: 10pt; }
     #status:empty { display: none; }
 
     .item { padding: 6px 10px 6px 10px; border-bottom: 1px solid #e8e8e0; }
 
     .item-title-row { display: flex; align-items: baseline; gap: 6px; }
     .item-rank {
-      color: #6a6a6a;
+      color: #828282;
       font-size: 11pt;
       min-width: 32px;
       text-align: right;
       flex-shrink: 0;
     }
     .item-title a { font-size: 12pt; color: #000; text-decoration: none; }
-    .item-title a:visited { color: #6a6a6a; }
+    .item-title a:visited { color: #828282; }
     .item-title a:hover { text-decoration: underline; }
-    .item-domain { font-size: 9pt; color: #6a6a6a; margin-left: 4px; }
+    .item-domain { font-size: 9pt; color: #828282; margin-left: 4px; }
 
     .item-zh {
       font-size: 9pt;
@@ -107,39 +104,6 @@
       border-left: 2px solid #ff6600;
       line-height: 1.6;
     }
-    .summary-text {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      overflow: hidden;
-    }
-    .item-summary.clampable { cursor: pointer; }
-    .item-summary.expanded .summary-text { display: block; -webkit-line-clamp: unset; line-clamp: none; }
-    .item-summary:focus-visible { outline: 2px solid #ff6600; outline-offset: 1px; }
-    body.compact .item-summary { display: none; }
-
-    .item-emoji { margin-right: 2px; }
-    .new-badge { color: #b84a00; font-size: 8pt; font-weight: 700; margin-left: 6px; }
-    .read .item-title a, .read .item-title a:visited { color: #6a6a6a; }
-    .item-wrap.hide { display: none; }
-
-    #to-top {
-      position: fixed;
-      right: 14px;
-      bottom: 18px;
-      background: #f6f6ef;
-      color: #000;
-      border: 1px solid #ff6600;
-      font: 11px Verdana, Geneva, sans-serif;
-      padding: 8px 12px;
-      cursor: pointer;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-    #to-top.visible { opacity: 0.9; pointer-events: auto; }
-    #to-top:hover { opacity: 1; }
 
     .item-footer {
       padding-left: 38px;
@@ -151,18 +115,18 @@
     }
     .item-sub {
       font-size: 9pt;
-      color: #6a6a6a;
+      color: #828282;
       margin-left: auto;
       line-height: 1.6;
     }
-    .item-sub a { color: #6a6a6a; text-decoration: none; }
+    .item-sub a { color: #828282; text-decoration: none; }
     .item-sub a:hover { text-decoration: underline; }
-    .item-sub .hl { color: #b84a00; font-weight: 700; }
+    .item-sub .hl { color: #ff6600; font-weight: 700; }
 
     .expand-btn {
       background: none;
       border: none;
-      color: #6a6a6a;
+      color: #828282;
       font-size: 9pt;
       cursor: pointer;
       text-decoration: underline;
@@ -171,7 +135,7 @@
       display: none;
     }
     .expand-btn.visible { display: inline; }
-    .expand-btn:hover { color: #b84a00; }
+    .expand-btn:hover { color: #ff6600; }
 
     .detail-content {
       display: none;
@@ -200,24 +164,20 @@
       font-size: 8pt;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #6a6a6a;
+      color: #828282;
       margin-bottom: 5px;
     }
     .glossary-item { font-size: 9pt; color: #666; margin-bottom: 3px; }
     .glossary-item strong { color: #000; }
 
-    .loading-detail { font-size: 9pt; color: #6a6a6a; padding: 5px 0; }
+    .loading-detail { font-size: 9pt; color: #828282; padding: 5px 0; }
 
     /* ── Mobile ── */
     @media (max-width: 600px) {
       body { font-size: 11pt; }
       main { max-width: 100%; }
-      header { padding: 0 6px 0 10px; gap: 6px; }
+      header { padding: 6px 10px; }
       header h1 { font-size: 15px; }
-      .header-right { gap: 0; }
-      .hdr-btn { min-height: 40px; padding: 0 7px; font-size: 12px; }
-      .btn-label { display: none; }
-      .item-sub a { display: inline-block; line-height: 40px; }
       .item { padding: 8px 8px 0 8px; }
       .item-rank { min-width: 24px; font-size: 11pt; }
       .item-title a { font-size: 12pt; line-height: 1.4; }
@@ -227,7 +187,7 @@
       .item-sub { font-size: 9pt; }
       .item-summary { font-size: 10pt; margin-left: 30px; padding: 6px 10px; line-height: 1.6; }
       .detail-content { padding-left: 30px; }
-      .expand-btn { font-size: 9pt; padding: 0 12px 0 0; min-height: 40px; }
+      .expand-btn { font-size: 9pt; padding: 6px 0; }
       .discussion-section h3 { font-size: 10pt; }
       .discussion-section p { font-size: 10pt; line-height: 1.6; }
       .glossary-item { font-size: 10pt; }
@@ -237,7 +197,7 @@
 
     /* ── Dark / newshacker theme ── */
     body.dark {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       background: #0a0a0a;
       color: #999;
     }
@@ -246,20 +206,22 @@
       border-bottom: 1px solid #222;
     }
     body.dark header h1 { color: #ff6600; }
-    body.dark .header-sub { color: #8a8a8a; }
+    body.dark .header-sub { color: #666; }
+    body.dark .refresh-btn,
+    body.dark .theme-btn { color: #888; }
 
 
-    body.dark #pull-indicator { color: #8a8a8a; }
-    body.dark #status { color: #8a8a8a; }
+    body.dark #pull-indicator { color: #666; }
+    body.dark #status { color: #666; }
 
     body.dark .item { border-bottom-color: #1a1a1a; }
-    body.dark .item-rank { color: #858585; }
+    body.dark .item-rank { color: #555; }
     body.dark .item-title a { color: #ddd; }
     body.dark .item-title a:visited { color: #888; }
-    body.dark .item-domain { color: #858585; }
+    body.dark .item-domain { color: #555; }
 
-    body.dark .item-sub { color: #8a8a8a; }
-    body.dark .item-sub a { color: #8a8a8a; }
+    body.dark .item-sub { color: #666; }
+    body.dark .item-sub a { color: #666; }
     body.dark .item-sub .hl { color: #ff6600; }
 
     body.dark .item-zh { color: #999; }
@@ -275,7 +237,7 @@
       color: #999;
     }
 
-    body.dark .expand-btn { color: #8a8a8a; }
+    body.dark .expand-btn { color: #666; }
     body.dark .expand-btn:hover { color: #ff6600; }
 
     body.dark .discussion-section h3 { color: #ff8c00; }
@@ -285,28 +247,20 @@
       background: #111;
       border-color: #222;
     }
-    body.dark .glossary h4 { color: #858585; }
+    body.dark .glossary h4 { color: #555; }
     body.dark .glossary-item { color: #888; }
     body.dark .glossary-item strong { color: #ccc; }
 
-    body.dark .loading-detail { color: #858585; }
-
-    body.dark .hdr-btn { color: #aaa; }
-    body.dark .item-summary:focus-visible { outline-color: #ff660090; }
-    body.dark .new-badge { color: #ff8c00; }
-    body.dark .read .item-title a, body.dark .read .item-title a:visited { color: #7d7d7d; }
-    body.dark #to-top { background: #141414; color: #ccc; border-color: #ff660090; }
+    body.dark .loading-detail { color: #555; }
   </style>
 </head>
 <body>
   <header>
     <h1>hnhn</h1>
-    <span class="header-sub" title="Hacker News + AI summaries"><span class="btn-label">updated </span><span id="updated-ago">…</span></span>
+    <span class="header-sub">+ AI summaries</span>
     <span class="header-right">
-      <button class="hdr-btn" id="compact-btn" aria-pressed="false" title="Hide summaries">compact</button>
-      <button class="hdr-btn" id="hide-read-btn" aria-pressed="false" title="Hide stories you have read">hide read</button>
-      <button class="hdr-btn" id="theme-btn" title="Switch theme">◑ theme</button>
-      <button class="hdr-btn" id="refresh-btn" title="Refresh" aria-label="Refresh">↻<span class="btn-label" id="refresh-label"> refresh</span></button>
+      <button class="theme-btn" id="theme-btn" title="Switch theme">◑ theme</button>
+      <button class="refresh-btn" id="refresh-btn" title="Refresh">↻ refresh</button>
     </span>
   </header>
 
@@ -315,7 +269,6 @@
     <div id="stories"></div>
     <div id="status">Loading...</div>
   </main>
-  <button id="to-top" title="Back to top">↑ top</button>
 
   <script>
     const HN = "https://hacker-news.firebaseio.com/v0";
@@ -327,109 +280,6 @@
     let loading = false;
     let gen = 0; // bumped on each refresh so in-flight loads can detect they are stale
     const nhCache = {};
-
-    // ── Local prefs ──
-    function loadJSON(key, fallback) {
-      try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch { return fallback; }
-    }
-    function saveJSON(key, v) {
-      try { localStorage.setItem(key, JSON.stringify(v)); } catch {}
-    }
-
-    // Read stories: opened, expanded, or comments clicked. Newest last, capped.
-    const READ_KEY = "hnhn-read";
-    const READ_MAX = 500;
-    let readIds = loadJSON(READ_KEY, []);
-    if (!Array.isArray(readIds)) readIds = [];
-    const readSet = new Set(readIds);
-
-    function markRead(id) {
-      id = Number(id);
-      if (readSet.has(id)) return;
-      readSet.add(id);
-      readIds.push(id);
-      if (readIds.length > READ_MAX) readSet.delete(readIds.shift());
-      saveJSON(READ_KEY, readIds);
-      // Dim only; the story stays visible until "hide read" is toggled again.
-      document.getElementById(`item-${id}`)?.classList.add("read");
-    }
-
-    // "new" = in the top list now but not in the list from the previous load.
-    const PREV_TOP_KEY = "hnhn-prev-top";
-    let newIds = new Set();
-
-    // ── Compact / hide read toggles ──
-    let compact = loadJSON("hnhn-compact", false) === true;
-    let hideRead = loadJSON("hnhn-hide-read", false) === true;
-
-    function applyCompact() {
-      document.body.classList.toggle("compact", compact);
-      document.getElementById("compact-btn").setAttribute("aria-pressed", String(compact));
-      if (!compact) document.querySelectorAll(".item-summary").forEach(updateClampable);
-    }
-
-    function applyHideRead() {
-      document.getElementById("hide-read-btn").setAttribute("aria-pressed", String(hideRead));
-      document.querySelectorAll(".item-wrap").forEach((el) =>
-        el.classList.toggle("hide", hideRead && el.classList.contains("read")));
-    }
-
-    document.getElementById("compact-btn").addEventListener("click", () => {
-      compact = !compact;
-      saveJSON("hnhn-compact", compact);
-      applyCompact();
-      maybeLoadMore();
-    });
-
-    document.getElementById("hide-read-btn").addEventListener("click", () => {
-      hideRead = !hideRead;
-      saveJSON("hnhn-hide-read", hideRead);
-      applyHideRead();
-      maybeLoadMore();
-    });
-
-    // A summary is clickable only when the 2-line clamp actually cuts text.
-    function updateClampable(sum) {
-      if (!sum || sum.offsetParent === null) return; // hidden (compact): measure later
-      const expanded = sum.classList.contains("expanded");
-      const text = sum.querySelector(".summary-text");
-      const clampable = expanded || text.scrollHeight > text.clientHeight + 1;
-      sum.classList.toggle("clampable", clampable);
-      if (clampable) {
-        sum.setAttribute("role", "button");
-        sum.tabIndex = 0;
-        sum.setAttribute("aria-expanded", String(expanded));
-        sum.title = expanded ? "Collapse summary" : "Show full summary";
-      } else {
-        sum.removeAttribute("role");
-        sum.removeAttribute("tabindex");
-        sum.removeAttribute("aria-expanded");
-        sum.removeAttribute("title");
-      }
-    }
-
-    function toggleSummary(sum) {
-      sum.classList.toggle("expanded");
-      updateClampable(sum);
-      if (sum.classList.contains("expanded")) markRead(sum.dataset.id);
-    }
-
-    let resizeTimer;
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => document.querySelectorAll(".item-summary").forEach(updateClampable), 150);
-    });
-
-    // ── "updated Xm ago" ──
-    let lastUpdated = 0;
-    function renderUpdated() {
-      const el = document.getElementById("updated-ago");
-      if (!lastUpdated) { el.textContent = "…"; return; }
-      const mins = Math.floor((Date.now() - lastUpdated) / 60000);
-      el.textContent = mins < 1 ? "just now" : mins < 60 ? `${mins}m ago` : `${Math.floor(mins / 60)}h ago`;
-    }
-    setInterval(renderUpdated, 30000);
-    document.addEventListener("visibilitychange", () => { if (!document.hidden) renderUpdated(); });
 
     // ── Theme ──
     // Preference: "system" | "light" | "dark". Default follows OS.
@@ -540,21 +390,18 @@
       const hnLink = `https://news.ycombinator.com/item?id=${hn.id}`;
       const el = document.createElement("div");
       el.id = `item-${hn.id}`;
-      el.className = "item-wrap";
-      if (readSet.has(hn.id)) el.classList.add("read");
-      if (hideRead && readSet.has(hn.id)) el.classList.add("hide");
       el.innerHTML = `
         <div class="item">
           <div class="item-title-row">
             <span class="item-rank">${rank}.</span>
             <span class="item-title">
-              <a class="story-link" data-id="${hn.id}" href="${esc(safeUrl(hn.url, hnLink))}" target="_blank" rel="noopener">${esc(hn.title)}</a>${d ? `<span class="item-domain"> (${esc(d)})</span>` : ""}${newIds.has(hn.id) ? `<span class="new-badge">new</span>` : ""}
+              <a href="${esc(safeUrl(hn.url, hnLink))}" target="_blank" rel="noopener">${esc(hn.title)}</a>${d ? `<span class="item-domain"> (${esc(d)})</span>` : ""}
             </span>
           </div>
           <div class="item-footer">
-            <button class="expand-btn" data-id="${hn.id}" aria-expanded="false" aria-controls="detail-${hn.id}">more</button>
+            <button class="expand-btn" data-id="${hn.id}">more</button>
             <span class="item-sub">
-              <span class="hl">${hn.score || 0}</span> points ${timeAgo(hn.time)} | <a class="story-link" data-id="${hn.id}" href="${esc(hnLink)}" target="_blank" rel="noopener"><span class="hl">${hn.descendants || 0}</span> comments</a>
+              <span class="hl">${hn.score || 0}</span> points ${timeAgo(hn.time)} | <a href="https://news.ycombinator.com/item?id=${hn.id}" target="_blank"><span class="hl">${hn.descendants || 0}</span> comments</a>
             </span>
           </div>
           <div class="detail-content" id="detail-${hn.id}"></div>
@@ -569,13 +416,12 @@
 
       const context = ai.context || "";
       const zhTitle = ai.chinese_title || "";
-      const emoji = ai.emoji || "";
 
       if (zhTitle) {
         const titleRow = el.querySelector(".item-title-row");
         if (titleRow && !el.querySelector(".item-zh")) {
           titleRow.insertAdjacentHTML("afterend",
-            `<div class="item-zh" lang="zh-CN">${emoji ? `<span class="item-emoji">${esc(emoji)}</span> ` : ""}${esc(zhTitle)}</div>`);
+            `<div class="item-zh">${esc(zhTitle)}</div>`);
         }
       }
 
@@ -583,8 +429,7 @@
         const footer = el.querySelector(".item-footer");
         if (footer && !el.querySelector(".item-summary")) {
           footer.insertAdjacentHTML("beforebegin",
-            `<div class="item-summary" lang="zh-CN" data-id="${id}"><div class="summary-text">${esc(context)}</div></div>`);
-          updateClampable(el.querySelector(".item-summary"));
+            `<div class="item-summary">${esc(context)}</div>`);
         }
       }
 
@@ -672,7 +517,6 @@
           if (nh) enrichItem(item.id, nh);
         });
       });
-      requestAnimationFrame(maybeLoadMore);
     }
 
     // ── Expand ──
@@ -684,10 +528,8 @@
       if (container.classList.contains("open")) {
         container.classList.remove("open");
         btn.textContent = "more";
-        btn.setAttribute("aria-expanded", "false");
         return;
       }
-      markRead(id);
       btn.textContent = "loading...";
       btn.disabled = true;
       try {
@@ -704,41 +546,15 @@
         container.classList.add("open");
         btn.textContent = "less";
       }
-      btn.setAttribute("aria-expanded", "true");
       btn.disabled = false;
     });
 
-    // Summary tap/keyboard expand, and read marking for article/comments links.
-    document.getElementById("stories").addEventListener("click", (e) => {
-      const sum = e.target.closest(".item-summary.clampable");
-      if (sum && !String(window.getSelection())) toggleSummary(sum);
-    });
-    document.getElementById("stories").addEventListener("keydown", (e) => {
-      const sum = e.target.closest(".item-summary.clampable");
-      if (sum && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggleSummary(sum); }
-    });
-    for (const type of ["click", "auxclick"]) {
-      document.getElementById("stories").addEventListener(type, (e) => {
-        const link = e.target.closest("a.story-link");
-        if (link && (type === "click" || e.button === 1)) markRead(link.dataset.id);
-      });
-    }
-
     // ── Scroll ──
-    // Also called after toggles and loads: hiding stories can leave the page
-    // too short to scroll, which would otherwise stop infinite scroll.
-    function maybeLoadMore() {
+    window.addEventListener("scroll", () => {
       if (loaded < allIds.length && window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
         loadMore();
       }
-    }
-
-    const toTop = document.getElementById("to-top");
-    window.addEventListener("scroll", () => {
-      maybeLoadMore();
-      toTop.classList.toggle("visible", window.scrollY > window.innerHeight * 2);
     });
-    toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
 
     // ── Load top stories (init + refresh) ──
     async function loadTop() {
@@ -758,35 +574,25 @@
         return;
       }
       if (myGen !== gen) return;
-      const prev = loadJSON(PREV_TOP_KEY, null);
-      const prevSet = new Set(Array.isArray(prev) ? prev : []);
-      newIds = new Set(prevSet.size ? ids.filter((id) => !prevSet.has(id)) : []);
-      saveJSON(PREV_TOP_KEY, ids);
       allIds = ids;
       await loadMore();
-      if (myGen === gen && loaded > 0) {
-        lastUpdated = Date.now();
-        renderUpdated();
-      }
     }
 
     let refreshing = false;
     async function refresh() {
       if (refreshing) return;
       refreshing = true;
-      const label = document.getElementById("refresh-label");
-      label.textContent = " ...";
+      const btn = document.getElementById("refresh-btn");
+      btn.textContent = "↻ ...";
       try {
         await loadTop();
       } finally {
         refreshing = false;
-        label.textContent = " refresh";
+        btn.textContent = "↻ refresh";
       }
     }
 
     document.getElementById("refresh-btn").addEventListener("click", refresh);
-    applyCompact();
-    applyHideRead();
     refresh();
 
     // ── Pull-to-refresh ──
