@@ -114,6 +114,8 @@
       line-clamp: 2;
       overflow: hidden;
     }
+    .item-summary.clampable { cursor: pointer; }
+    .item-summary.expanded .summary-text { display: block; -webkit-line-clamp: unset; line-clamp: none; }
     .item-summary:focus-visible { outline: 2px solid #ff6600; outline-offset: 1px; }
     body.compact .item-summary { display: none; }
 
@@ -138,59 +140,6 @@
     }
     #to-top.visible { opacity: 0.9; pointer-events: auto; }
     #to-top:hover { opacity: 1; }
-
-    /* Story body opens the post page; links and buttons keep their own action. */
-    .item { cursor: pointer; }
-    .item a, .item button { cursor: pointer; }
-    .item:hover { background: rgba(0, 0, 0, 0.025); }
-
-    /* ── Post page (#/item/<id>) ── */
-    #post-view { display: none; padding: 4px 10px 40px; }
-    body.post-open #post-view { display: block; }
-    body.post-open #stories, body.post-open #status,
-    body.post-open #compact-btn, body.post-open #hide-read-btn { display: none; }
-    .back-btn {
-      background: none; border: none; color: #6a6a6a; cursor: pointer;
-      font: 9pt Verdana, Geneva, sans-serif; padding: 8px 0; margin-bottom: 4px;
-    }
-    .back-btn:hover { color: #000; }
-    .post-title { font-size: 14pt; font-weight: normal; line-height: 1.35; }
-    .post-title a { color: #000; text-decoration: none; }
-    .post-title a:hover { text-decoration: underline; }
-    .post-domain { font-size: 9pt; color: #6a6a6a; margin-top: 2px; }
-    .post-zh { font-size: 10pt; color: #666; margin-top: 6px; }
-    .post-meta { font-size: 9pt; color: #6a6a6a; margin-top: 8px; line-height: 1.6; }
-    .post-meta a { color: #6a6a6a; }
-    .post-meta .hl { color: #b84a00; font-weight: 700; }
-    .post-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 16px; }
-    .post-btn {
-      font: 9pt Verdana, Geneva, sans-serif; color: #000; background: #fff;
-      border: 1px solid #d8d2bd; padding: 6px 12px; text-decoration: none; cursor: pointer;
-    }
-    .post-btn:hover { border-color: #ff6600; }
-    .post-text, .post-summary { font-size: 10pt; line-height: 1.7; margin-bottom: 12px; }
-    .post-text { color: #222; overflow-wrap: anywhere; }
-    .post-text p { margin-top: 8px; }
-    .post-summary { color: #444; padding: 8px 12px; background: #f0ead6; border-left: 2px solid #ff6600; }
-    .post-section { margin-top: 20px; }
-    .post-section > h3 {
-      font-size: 10pt; color: #000; padding-bottom: 4px; margin-bottom: 4px;
-      border-bottom: 1px solid #e8e8e0;
-    }
-    .comment { padding: 9px 0; border-bottom: 1px solid #e8e8e0; }
-    .comment-meta { font-size: 8pt; color: #6a6a6a; margin-bottom: 4px; }
-    .comment-meta a { color: #6a6a6a; }
-    .comment-text { font-size: 9pt; color: #222; line-height: 1.6; overflow-wrap: anywhere; }
-    .comment-text p { margin-top: 6px; }
-    .comment-text a, .post-text a { color: #6a6a6a; }
-    .comment-text pre, .post-text pre {
-      white-space: pre-wrap; font-size: 8pt; background: #f0ead6; padding: 6px 8px; margin-top: 6px;
-    }
-    .more-comments { margin-top: 10px; }
-    .related-item { font-size: 9pt; padding: 5px 0; }
-    .related-item a { color: #000; text-decoration: none; }
-    .related-item a:hover { text-decoration: underline; }
-    .related-meta { color: #6a6a6a; font-size: 8pt; }
 
     .item-footer {
       padding-left: 38px;
@@ -269,15 +218,6 @@
       .hdr-btn { min-height: 40px; padding: 0 7px; font-size: 12px; }
       .btn-label { display: none; }
       .item-sub a { display: inline-block; line-height: 40px; }
-      .back-btn { min-height: 40px; font-size: 10pt; }
-      .post-title { font-size: 15pt; }
-      .post-zh { font-size: 11pt; }
-      .post-btn { min-height: 40px; display: inline-flex; align-items: center; font-size: 10pt; }
-      .post-text, .post-summary { font-size: 11pt; }
-      .comment-text { font-size: 10.5pt; }
-      .comment-meta { font-size: 9pt; }
-      .comment-meta a, .post-meta a { display: inline-block; line-height: 32px; }
-      .related-item { font-size: 10pt; padding: 8px 0; }
       .item { padding: 8px 8px 0 8px; }
       .item-rank { min-width: 24px; font-size: 11pt; }
       .item-title a { font-size: 12pt; line-height: 1.4; }
@@ -356,24 +296,6 @@
     body.dark .new-badge { color: #ff8c00; }
     body.dark .read .item-title a, body.dark .read .item-title a:visited { color: #7d7d7d; }
     body.dark #to-top { background: #141414; color: #ccc; border-color: #ff660090; }
-
-    body.dark .item:hover { background: rgba(255, 255, 255, 0.025); }
-    body.dark .back-btn { color: #8a8a8a; }
-    body.dark .back-btn:hover { color: #ddd; }
-    body.dark .post-title a { color: #eee; }
-    body.dark .post-domain, body.dark .post-meta, body.dark .post-meta a { color: #8a8a8a; }
-    body.dark .post-meta .hl { color: #ff6600; }
-    body.dark .post-zh { color: #aaa; }
-    body.dark .post-btn { color: #ddd; background: #141414; border-color: #2a2a2a; }
-    body.dark .post-btn:hover { border-color: #ff660090; }
-    body.dark .post-summary { color: #aaa; background: #141414; border-left-color: #ff660060; }
-    body.dark .post-text, body.dark .comment-text { color: #c8c8c8; }
-    body.dark .post-section > h3 { color: #ff8c00; border-bottom-color: #222; }
-    body.dark .comment { border-bottom-color: #1a1a1a; }
-    body.dark .comment-meta, body.dark .comment-meta a, body.dark .related-meta { color: #8a8a8a; }
-    body.dark .comment-text a, body.dark .post-text a { color: #9a9a9a; }
-    body.dark .comment-text pre, body.dark .post-text pre { background: #141414; }
-    body.dark .related-item a { color: #ddd; }
   </style>
 </head>
 <body>
@@ -390,7 +312,6 @@
 
   <div id="pull-indicator">↓ release to refresh</div>
   <main>
-    <section id="post-view" aria-live="polite"></section>
     <div id="stories"></div>
     <div id="status">Loading...</div>
   </main>
@@ -444,6 +365,7 @@
     function applyCompact() {
       document.body.classList.toggle("compact", compact);
       document.getElementById("compact-btn").setAttribute("aria-pressed", String(compact));
+      if (!compact) document.querySelectorAll(".item-summary").forEach(updateClampable);
     }
 
     function applyHideRead() {
@@ -464,6 +386,38 @@
       saveJSON("hnhn-hide-read", hideRead);
       applyHideRead();
       maybeLoadMore();
+    });
+
+    // A summary is clickable only when the 2-line clamp actually cuts text.
+    function updateClampable(sum) {
+      if (!sum || sum.offsetParent === null) return; // hidden (compact): measure later
+      const expanded = sum.classList.contains("expanded");
+      const text = sum.querySelector(".summary-text");
+      const clampable = expanded || text.scrollHeight > text.clientHeight + 1;
+      sum.classList.toggle("clampable", clampable);
+      if (clampable) {
+        sum.setAttribute("role", "button");
+        sum.tabIndex = 0;
+        sum.setAttribute("aria-expanded", String(expanded));
+        sum.title = expanded ? "Collapse summary" : "Show full summary";
+      } else {
+        sum.removeAttribute("role");
+        sum.removeAttribute("tabindex");
+        sum.removeAttribute("aria-expanded");
+        sum.removeAttribute("title");
+      }
+    }
+
+    function toggleSummary(sum) {
+      sum.classList.toggle("expanded");
+      updateClampable(sum);
+      if (sum.classList.contains("expanded")) markRead(sum.dataset.id);
+    }
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => document.querySelectorAll(".item-summary").forEach(updateClampable), 150);
     });
 
     // ── "updated Xm ago" ──
@@ -530,8 +484,7 @@
       if (diff < 60) return `${diff}s ago`;
       if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
       if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-      if (diff < 86400 * 365) return `${Math.floor(diff / 86400)}d ago`;
-      return `${Math.floor(diff / (86400 * 365))}y ago`;
+      return `${Math.floor(diff / 86400)}d ago`;
     }
 
     function domain(url) {
@@ -556,13 +509,10 @@
     }
 
     // ── Data ──
-    const hnCache = {};
     async function fetchHNItem(id) {
       const r = await fetch(`${HN}/item/${id}.json`);
       if (!r.ok) throw new Error(`HN item ${id}: ${r.status}`);
-      const item = await r.json();
-      if (item) hnCache[item.id] = item;
-      return item;
+      return r.json();
     }
 
     function aiOf(data) {
@@ -633,7 +583,8 @@
         const footer = el.querySelector(".item-footer");
         if (footer && !el.querySelector(".item-summary")) {
           footer.insertAdjacentHTML("beforebegin",
-            `<div class="item-summary" lang="zh-CN" data-id="${id}" role="link" tabindex="0" title="Open post"><div class="summary-text">${esc(context)}</div></div>`);
+            `<div class="item-summary" lang="zh-CN" data-id="${id}"><div class="summary-text">${esc(context)}</div></div>`);
+          updateClampable(el.querySelector(".item-summary"));
         }
       }
 
@@ -757,15 +708,14 @@
       btn.disabled = false;
     });
 
-    // Clicking the story body (not a link or button) opens the post page.
+    // Summary tap/keyboard expand, and read marking for article/comments links.
     document.getElementById("stories").addEventListener("click", (e) => {
-      if (e.target.closest("a, button, .detail-content") || String(window.getSelection())) return;
-      const wrap = e.target.closest(".item-wrap");
-      if (wrap) openPost(wrap.id.slice(5));
+      const sum = e.target.closest(".item-summary.clampable");
+      if (sum && !String(window.getSelection())) toggleSummary(sum);
     });
     document.getElementById("stories").addEventListener("keydown", (e) => {
-      const sum = e.target.closest(".item-summary");
-      if (sum && e.key === "Enter") openPost(sum.dataset.id);
+      const sum = e.target.closest(".item-summary.clampable");
+      if (sum && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggleSummary(sum); }
     });
     for (const type of ["click", "auxclick"]) {
       document.getElementById("stories").addEventListener(type, (e) => {
@@ -778,7 +728,6 @@
     // Also called after toggles and loads: hiding stories can leave the page
     // too short to scroll, which would otherwise stop infinite scroll.
     function maybeLoadMore() {
-      if (postOpen()) return;
       if (loaded < allIds.length && window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
         loadMore();
       }
@@ -790,207 +739,6 @@
       toTop.classList.toggle("visible", window.scrollY > window.innerHeight * 2);
     });
     toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-
-    // ── Post page ──
-    // Hash route #/item/<id>: works on static hosting, and the list stays in
-    // the DOM (hidden) so going back restores it at the same scroll position.
-    let currentPostId = null;
-    let postGen = 0;
-    let listScrollY = 0;
-    const COMMENTS_PAGE = 10;
-
-    function postOpen() { return document.body.classList.contains("post-open"); }
-
-    function openPost(id) {
-      history.pushState({ inApp: true }, "", `#/item/${id}`);
-      route();
-    }
-
-    function closePost() {
-      if (history.state && history.state.inApp) history.back();
-      else { history.replaceState(null, "", location.pathname + location.search); route(); }
-    }
-
-    function route() {
-      const m = location.hash.match(/^#\/item\/(\d+)$/);
-      // popstate and hashchange can both fire for one navigation.
-      if (m && postOpen() && currentPostId === Number(m[1])) return;
-      if (m) showPost(Number(m[1]));
-      else showList();
-    }
-    window.addEventListener("popstate", route);
-    window.addEventListener("hashchange", route);
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && postOpen()) closePost();
-    });
-
-    function showList() {
-      if (!postOpen()) return;
-      postGen++;
-      currentPostId = null;
-      document.body.classList.remove("post-open");
-      document.getElementById("post-view").innerHTML = "";
-      document.title = "hnhn";
-      window.scrollTo(0, listScrollY);
-      maybeLoadMore();
-    }
-
-    // HN comment/story text is HTML. Rebuild it from an inert parsed copy,
-    // keeping only simple formatting tags and http(s) links.
-    const ALLOWED_TAGS = new Set(["P", "A", "I", "EM", "B", "STRONG", "PRE", "CODE", "BR"]);
-    function sanitizeHN(html) {
-      const doc = new DOMParser().parseFromString(`<div>${html || ""}</div>`, "text/html");
-      const out = document.createElement("div");
-      (function walk(src, dst) {
-        for (const n of src.childNodes) {
-          if (n.nodeType === Node.TEXT_NODE) { dst.appendChild(document.createTextNode(n.textContent)); continue; }
-          if (n.nodeType !== Node.ELEMENT_NODE || n.tagName === "SCRIPT" || n.tagName === "STYLE") continue;
-          if (!ALLOWED_TAGS.has(n.tagName)) { walk(n, dst); continue; }
-          const el = document.createElement(n.tagName);
-          if (n.tagName === "A") {
-            const href = safeUrl(n.getAttribute("href"), null);
-            if (href) { el.href = href; el.target = "_blank"; el.rel = "noopener nofollow"; }
-          }
-          walk(n, el);
-          dst.appendChild(el);
-        }
-      })(doc.body.firstChild, out);
-      return out.innerHTML;
-    }
-
-    function userLink(by) {
-      if (!by) return "[deleted]";
-      return `<a href="https://news.ycombinator.com/user?id=${encodeURIComponent(by)}" target="_blank" rel="noopener">${esc(by)}</a>`;
-    }
-
-    async function showPost(id) {
-      const myGen = ++postGen;
-      if (!postOpen()) listScrollY = window.scrollY;
-      currentPostId = id;
-      document.body.classList.add("post-open");
-      window.scrollTo(0, 0);
-      markRead(id);
-      const view = document.getElementById("post-view");
-      const back = `<button class="back-btn" id="back-btn">← back to stories</button>`;
-      view.innerHTML = `${back}<p class="loading-detail">Loading...</p>`;
-
-      let hn = hnCache[id];
-      if (!hn) {
-        try { hn = await fetchHNItem(id); } catch { hn = undefined; }
-        if (myGen !== postGen) return;
-      }
-      if (hn === undefined) {
-        view.innerHTML = `${back}<p class="loading-detail">Failed to load. <a href="#" id="post-retry">retry</a></p>`;
-        return;
-      }
-      if (!hn || hn.deleted || hn.dead) {
-        view.innerHTML = `${back}<p class="loading-detail">Story not found.</p>`;
-        return;
-      }
-
-      const hnLink = `https://news.ycombinator.com/item?id=${hn.id}`;
-      const url = safeUrl(hn.url, null);
-      const d = domain(hn.url);
-      document.title = `${hn.title} — hnhn`;
-      view.innerHTML = `${back}
-        <article>
-          <h2 class="post-title"><a href="${esc(url || hnLink)}" target="_blank" rel="noopener">${esc(hn.title)}</a></h2>
-          ${d ? `<div class="post-domain">${esc(d)}</div>` : ""}
-          <div class="post-zh" id="post-zh" lang="zh-CN"></div>
-          <div class="post-meta">
-            <span class="hl">${Number(hn.score) || 0}</span> points by ${userLink(hn.by)} ${timeAgo(hn.time)}
-            | <a href="${esc(hnLink)}" target="_blank" rel="noopener"><span class="hl">${Number(hn.descendants) || 0}</span> comments</a>
-          </div>
-          <div class="post-actions">
-            ${url ? `<a class="post-btn" href="${esc(url)}" target="_blank" rel="noopener">open article ↗</a>` : ""}
-            <a class="post-btn" href="${esc(hnLink)}" target="_blank" rel="noopener">discuss on HN ↗</a>
-          </div>
-          ${hn.text ? `<div class="post-text">${sanitizeHN(hn.text)}</div>` : ""}
-          <section id="post-ai"><p class="loading-detail">Loading AI summary...</p></section>
-          <section class="post-section">
-            <h3>Top comments</h3>
-            <div id="post-comments"></div>
-            <div id="post-comments-status"><p class="loading-detail">Loading comments...</p></div>
-          </section>
-          <section class="post-section" id="post-related-wrap" hidden>
-            <h3>Other discussions of this link</h3>
-            <div id="post-related"></div>
-          </section>
-        </article>`;
-
-      fetchNHItem(id).then((nh) => { if (myGen === postGen) renderPostAI(nh); });
-      loadComments(hn, 0, myGen);
-      if (url) loadRelated(hn, url, myGen);
-    }
-
-    function renderPostAI(nh) {
-      const ai = aiOf(nh);
-      const box = document.getElementById("post-ai");
-      if (!ai) { box.innerHTML = `<p class="loading-detail">No AI summary yet.</p>`; return; }
-      if (ai.chinese_title) {
-        document.getElementById("post-zh").innerHTML =
-          `${ai.emoji ? `<span class="item-emoji">${esc(ai.emoji)}</span> ` : ""}${esc(ai.chinese_title)}`;
-      }
-      box.innerHTML =
-        (ai.context ? `<div class="post-summary" lang="zh-CN">${esc(ai.context)}</div>` : "") +
-        `<div class="post-section"><h3>Discussion</h3>${renderDetail(nh)}</div>`;
-    }
-
-    async function loadComments(hn, start, myGen) {
-      const kids = hn.kids || [];
-      const status = document.getElementById("post-comments-status");
-      if (!kids.length) { status.innerHTML = `<p class="loading-detail">No comments yet.</p>`; return; }
-      status.innerHTML = `<p class="loading-detail">Loading comments...</p>`;
-      const page = kids.slice(start, start + COMMENTS_PAGE);
-      const items = await Promise.all(page.map((k) => fetchHNItem(k).catch(() => null)));
-      if (myGen !== postGen) return;
-      const html = items
-        .filter((c) => c && !c.deleted && !c.dead && c.text)
-        .map((c) => {
-          const replies = (c.kids || []).length;
-          const cLink = `https://news.ycombinator.com/item?id=${c.id}`;
-          return `<div class="comment">
-            <div class="comment-meta">${userLink(c.by)} ${timeAgo(c.time)}${replies ? ` | <a href="${esc(cLink)}" target="_blank" rel="noopener">${replies} ${replies === 1 ? "reply" : "replies"}</a>` : ""}</div>
-            <div class="comment-text">${sanitizeHN(c.text)}</div>
-          </div>`;
-        }).join("");
-      document.getElementById("post-comments").insertAdjacentHTML("beforeend", html);
-      const next = start + COMMENTS_PAGE;
-      status.innerHTML = next < kids.length
-        ? `<button class="post-btn more-comments" id="more-comments" data-next="${next}">more comments (${kids.length - next} left)</button>`
-        : "";
-    }
-
-    // Other HN submissions of the same URL, via the Algolia HN search API.
-    async function loadRelated(hn, url, myGen) {
-      const norm = (u) => (u || "").replace(/^https?:\/\/(www\.)?/, "").replace(/\/+$/, "");
-      try {
-        const r = await fetch(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(url)}&restrictSearchableAttributes=url&hitsPerPage=20`);
-        if (!r.ok) return;
-        const data = await r.json();
-        if (myGen !== postGen) return;
-        const hits = (data.hits || [])
-          .filter((h) => String(h.objectID) !== String(hn.id) && norm(h.url) === norm(url))
-          .sort((a, b) => (b.points || 0) - (a.points || 0))
-          .slice(0, 5);
-        if (!hits.length) return;
-        document.getElementById("post-related").innerHTML = hits.map((h) => `
-          <div class="related-item">
-            <a href="#/item/${encodeURIComponent(h.objectID)}" class="related-link" data-id="${esc(h.objectID)}">${esc(h.title)}</a>
-            <div class="related-meta">${Number(h.points) || 0} points · ${Number(h.num_comments) || 0} comments · ${timeAgo(h.created_at_i)}</div>
-          </div>`).join("");
-        document.getElementById("post-related-wrap").hidden = false;
-      } catch {}
-    }
-
-    document.getElementById("post-view").addEventListener("click", (e) => {
-      if (e.target.closest("#back-btn")) { closePost(); return; }
-      if (e.target.id === "post-retry") { e.preventDefault(); showPost(currentPostId); return; }
-      const more = e.target.closest("#more-comments");
-      if (more) { loadComments(hnCache[currentPostId], Number(more.dataset.next), postGen); return; }
-      const rel = e.target.closest(".related-link");
-      if (rel && !e.metaKey && !e.ctrlKey && !e.shiftKey) { e.preventDefault(); openPost(rel.dataset.id); }
-    });
 
     // ── Load top stories (init + refresh) ──
     async function loadTop() {
@@ -1036,17 +784,10 @@
       }
     }
 
-    function refreshCurrent() {
-      if (!postOpen()) return refresh();
-      delete hnCache[currentPostId];
-      return showPost(currentPostId);
-    }
-
-    document.getElementById("refresh-btn").addEventListener("click", refreshCurrent);
+    document.getElementById("refresh-btn").addEventListener("click", refresh);
     applyCompact();
     applyHideRead();
     refresh();
-    route();
 
     // ── Pull-to-refresh ──
     let touchStartY = 0;
@@ -1072,7 +813,7 @@
       if (pulling && parseInt(pullEl.style.height) >= 35) {
         pullEl.textContent = "refreshing...";
         pullEl.style.height = "24px";
-        Promise.resolve(refreshCurrent()).finally(() => {
+        refresh().then(() => {
           pullEl.style.height = "0";
         });
       } else {
