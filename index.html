@@ -103,6 +103,8 @@
       background: #f0ead6;
       border-left: 2px solid #ff6600;
       line-height: 1.6;
+      cursor: pointer; /* tapping it toggles "more" */
+      -webkit-tap-highlight-color: transparent;
     }
 
     .item-footer {
@@ -521,8 +523,15 @@
 
     // ── Expand ──
     document.getElementById("stories").addEventListener("click", async (e) => {
-      const btn = e.target.closest(".expand-btn");
-      if (!btn) return;
+      let btn = e.target.closest(".expand-btn");
+      if (!btn) {
+        // Tapping the summary acts like the story's "more" button,
+        // unless the user is selecting text.
+        const sum = e.target.closest(".item-summary");
+        if (!sum || String(window.getSelection())) return;
+        btn = sum.closest("[id^=item-]").querySelector(".expand-btn.visible");
+        if (!btn || btn.disabled) return;
+      }
       const id = btn.dataset.id;
       const container = document.getElementById(`detail-${id}`);
       if (container.classList.contains("open")) {
