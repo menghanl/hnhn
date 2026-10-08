@@ -107,54 +107,9 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .item-footer {
-      padding-left: 38px;
-      padding-bottom: 5px;
-      padding-top: 2px;
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-    }
-    .item-sub {
-      font-size: 9pt;
-      color: #828282;
-      margin-left: auto;
-      line-height: 1.6;
-    }
-    .item-sub a { color: #828282; text-decoration: none; }
-    .item-sub a:hover { text-decoration: underline; }
-    .item-sub .hl { color: #ff6600; font-weight: 700; }
 
-    .expand-btn {
-      background: none;
-      border: none;
-      color: #828282;
-      font-size: 9pt;
-      cursor: pointer;
-      text-decoration: underline;
-      padding: 0;
-      font-family: Verdana, Geneva, sans-serif;
-      display: none;
-    }
-    .expand-btn.visible { display: inline; }
-    .expand-btn:hover { color: #ff6600; }
 
-    .detail-content {
-      display: none;
-      margin-top: 8px;
-      padding-left: 38px;
-      padding-bottom: 4px;
-    }
-    .detail-content.open { display: block; }
 
-    .discussion-section { margin-bottom: 12px; }
-    .discussion-section h3 {
-      font-size: 10pt;
-      font-weight: 700;
-      color: #000;
-      margin-bottom: 3px;
-    }
-    .discussion-section p { font-size: 9pt; color: #666; line-height: 1.6; }
 
     .glossary {
       margin-top: 10px;
@@ -172,7 +127,77 @@
     .glossary-item { font-size: 9pt; color: #666; margin-bottom: 3px; }
     .glossary-item strong { color: #000; }
 
-    .loading-detail { font-size: 9pt; color: #828282; padding: 5px 0; }
+
+    /* ── Discussion topics: plain "▸ topic" lines under the points row, styled
+       like the original details. Tap a topic to open it; tap the summary for all. ── */
+    .item-summary.tappable { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .chips { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 16px; margin: 2px 0 6px 38px; }
+    /* Desktop: chip-item wrappers dissolve so buttons form a row and bodies
+       (full width, in chip order) stack below it. Phones use a vertical list. */
+    .chip-item { display: contents; }
+    .chip { order: 1; }
+    .chip-body { order: 2; flex-basis: 100%; }
+    .chips-quip { order: 0; }
+    .chips-terms { order: 3; }
+    .chip-body-title { font-size: 10pt; font-weight: 700; color: #000; margin-bottom: 3px; }
+    .chip {
+      background: none; border: 0; padding: 2px 0; margin: 0; font: inherit; cursor: pointer;
+      max-width: 100%; text-align: left; -webkit-tap-highlight-color: transparent;
+    }
+    .chip > span {
+      display: inline-block; vertical-align: top;
+      font-size: 9pt; line-height: 1.6; color: #333;
+      padding-left: 1em; text-indent: -1em; /* wrapped lines align after the ▸ */
+    }
+    .chip > span::before { content: "▸"; display: inline-block; width: 1em; text-indent: 0; color: #ff6600; }
+    .chip.on > span { font-weight: 700; color: #000; }
+    .chip.on > span::before { content: "▾"; }
+    @media (hover: hover) { .chip:hover > span { color: #000; } body.dark .chip:hover > span { color: #fff; } }
+    .chip:focus-visible { outline: none; }
+    .chip:focus-visible > span { outline: 2px solid #ff6600; outline-offset: 1px; }
+    .chip-body { margin: 4px 0 10px 0; }
+    .chip-body p { font-size: 9pt; color: #666; line-height: 1.6; }
+    /* Quip and terms appear only in the expanded view (summary tap). */
+    .chips-extra { display: none; align-self: stretch; flex-basis: 100%; }
+    .chips.all-open .chips-extra { display: block; }
+    .chips-extra .item-quip { margin: 4px 0 6px; }
+    .chips-extra .glossary { margin: 6px 0 2px; }
+
+
+    /* Left column: rank, then points / age / comments as small lines. Content
+       starts at the original indent. */
+    .item-g { display: flex; gap: 6px; }
+    .gutter {
+      width: 34px; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-start;
+      font: 7.5pt/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      color: #828282; white-space: nowrap;
+    }
+    .gutter .item-rank { min-width: 0; margin-bottom: 1px; font-family: Verdana, Geneva, sans-serif; align-self: flex-end; }
+    body.dark .gutter .item-rank { font-family: inherit; }
+    .g-pts { color: #ff6600; font-weight: 700; }
+    /* Points, age and comments form one link to the HN thread. */
+    .g-meta { display: flex; flex-direction: column; align-items: flex-start; color: inherit; text-decoration: none; padding-bottom: 4px; }
+    @media (hover: hover) { .g-meta:hover .g-age, .g-meta:hover .g-com { color: #000; } body.dark .g-meta:hover .g-age, body.dark .g-meta:hover .g-com { color: #ddd; } }
+    .item-body { flex: 1; min-width: 0; }
+    /* Desktop: the original "N points Xh ago | N comments" as one link, right side of
+       the title line. Phones use the compact left column instead. */
+    .g-meta { display: none; }
+    .item-title { flex: 1; min-width: 0; }
+    .t-meta { flex-shrink: 0; margin-left: auto; padding-left: 12px; white-space: nowrap; font-size: 9pt; color: #828282; text-decoration: none; }
+    .t-meta .hl { color: #ff6600; font-weight: 700; }
+    @media (hover: hover) { .t-meta:hover { text-decoration: underline; } }
+    body.dark .t-meta { color: #666; }
+    .item-g .item-zh { padding-left: 0; }
+    .item-g .item-summary { margin-left: 0; }
+    .item-g .chips { margin-left: 0; }
+    body.dark .gutter { color: #666; }
+    @media (max-width: 600px) {
+      .item-g { gap: 4px; }
+      .g-meta { display: flex; }
+      .t-meta { display: none; }
+      .gutter { width: 34px; }
+      .g-meta { padding-bottom: 8px; } /* a bit more tap area */
+    }
 
     /* ── Mobile ── */
     @media (max-width: 600px) {
@@ -185,16 +210,17 @@
       .item-title a { font-size: 12pt; line-height: 1.4; }
       .item-domain { font-size: 9pt; }
       .item-zh { font-size: 10pt; padding-left: 30px; }
-      .item-footer { padding-left: 30px; flex-wrap: wrap; }
-      .item-sub { font-size: 9pt; }
       .item-summary { font-size: 10pt; margin-left: 30px; padding: 6px 10px; line-height: 1.6; }
-      .detail-content { padding-left: 30px; }
-      .expand-btn { font-size: 9pt; padding: 6px 0; }
-      .discussion-section h3 { font-size: 10pt; }
-      .discussion-section p { font-size: 10pt; line-height: 1.6; }
       .glossary-item { font-size: 10pt; }
       .glossary h4 { font-size: 8pt; }
-      .loading-detail { font-size: 10pt; }
+      .chips { flex-direction: column; flex-wrap: nowrap; align-items: stretch; margin-left: 30px; }
+      .chip-item { display: block; max-width: 100%; }
+      .chip-body { margin: 1px 0 6px 1em; }
+      .chip-body-title { display: none; }
+      /* Compact rows; each is a full-width button so adjacent rows leave no dead space. */
+      .chip { display: block; width: 100%; padding: 4px 0; }
+      .chip > span { font-size: 10pt; line-height: 1.45; }
+      .chip-body p { font-size: 10pt; }
     }
 
     /* ── Dark / newshacker theme ── */
@@ -222,9 +248,6 @@
     body.dark .item-title a:visited { color: #888; }
     body.dark .item-domain { color: #555; }
 
-    body.dark .item-sub { color: #666; }
-    body.dark .item-sub a { color: #666; }
-    body.dark .item-sub .hl { color: #ff6600; }
 
     body.dark .item-zh { color: #999; }
     body.dark .item-quip {
@@ -239,11 +262,7 @@
       color: #999;
     }
 
-    body.dark .expand-btn { color: #666; }
-    body.dark .expand-btn:hover { color: #ff6600; }
 
-    body.dark .discussion-section h3 { color: #ff8c00; }
-    body.dark .discussion-section p { color: #999; }
 
     body.dark .glossary {
       background: #111;
@@ -253,7 +272,10 @@
     body.dark .glossary-item { color: #888; }
     body.dark .glossary-item strong { color: #ccc; }
 
-    body.dark .loading-detail { color: #555; }
+    body.dark .chip > span { color: #bbb; }
+    body.dark .chip.on > span { color: #ddd; }
+    body.dark .chip-body p { color: #999; }
+    body.dark .chip-body-title { color: #ff8c00; }
   </style>
 </head>
 <body>
@@ -393,80 +415,92 @@
       const el = document.createElement("div");
       el.id = `item-${hn.id}`;
       el.innerHTML = `
-        <div class="item">
-          <div class="item-title-row">
+        <div class="item item-g">
+          <div class="gutter">
             <span class="item-rank">${rank}.</span>
-            <span class="item-title">
-              <a href="${esc(safeUrl(hn.url, hnLink))}" target="_blank" rel="noopener">${esc(hn.title)}</a>${d ? `<span class="item-domain"> (${esc(d)})</span>` : ""}
-            </span>
+            <a class="g-meta" href="https://news.ycombinator.com/item?id=${hn.id}" target="_blank" rel="noopener"
+               title="${Number(hn.score) || 0} points · ${timeAgo(hn.time)} · ${Number(hn.descendants) || 0} comments">
+              <span class="g-pts">${Number(hn.score) || 0}p</span>
+              <span class="g-age">${timeAgo(hn.time).replace(" ago", "")}</span>
+              <span class="g-com">${Number(hn.descendants) || 0}c</span>
+            </a>
           </div>
-          <div class="item-footer">
-            <button class="expand-btn" data-id="${hn.id}">more</button>
-            <span class="item-sub">
-              <span class="hl">${hn.score || 0}</span> points ${timeAgo(hn.time)} | <a href="https://news.ycombinator.com/item?id=${hn.id}" target="_blank"><span class="hl">${hn.descendants || 0}</span> comments</a>
-            </span>
+          <div class="item-body">
+            <div class="item-title-row">
+              <span class="item-title">
+                <a href="${esc(safeUrl(hn.url, hnLink))}" target="_blank" rel="noopener">${esc(hn.title)}</a>${d ? `<span class="item-domain"> (${esc(d)})</span>` : ""}
+              </span>
+              <a class="t-meta" href="https://news.ycombinator.com/item?id=${hn.id}" target="_blank" rel="noopener"><span class="hl">${Number(hn.score) || 0}</span> points | ${timeAgo(hn.time)} | <span class="hl">${Number(hn.descendants) || 0}</span> comments</a>
+            </div>
           </div>
-          <div class="detail-content" id="detail-${hn.id}"></div>
         </div>`;
       return el;
     }
 
+    // Subtitle, summary and chips are appended in reading order, so expanding
+    // a story only grows its bottom edge.
     function enrichItem(id, nh) {
       const el = document.getElementById(`item-${id}`);
       const ai = aiOf(nh);
-      if (!el || !ai) return;
-
-      const context = ai.context || "";
-      const zhTitle = ai.chinese_title || "";
-
-      if (zhTitle) {
-        const titleRow = el.querySelector(".item-title-row");
-        if (titleRow && !el.querySelector(".item-zh")) {
-          titleRow.insertAdjacentHTML("afterend",
-            `<div class="item-zh">${esc(zhTitle)}</div>`);
-        }
+      if (!el || !ai || el.dataset.enriched) return;
+      el.dataset.enriched = "1";
+      const box = el.querySelector(".item-body");
+      if (ai.chinese_title) box.insertAdjacentHTML("beforeend", `<div class="item-zh">${esc(ai.chinese_title)}</div>`);
+      if (ai.context) box.insertAdjacentHTML("beforeend", `<div class="item-summary">${esc(ai.context)}</div>`);
+      const chips = chipsHtml(id, ai);
+      if (chips) {
+        box.insertAdjacentHTML("beforeend", chips);
+        box.querySelector(".item-summary")?.classList.add("tappable");
       }
-
-      if (context) {
-        const footer = el.querySelector(".item-footer");
-        if (footer && !el.querySelector(".item-summary")) {
-          footer.insertAdjacentHTML("beforebegin",
-            `<div class="item-summary">${esc(context)}</div>`);
-        }
-      }
-
-      const expandBtn = el.querySelector(".expand-btn");
-      if (expandBtn) expandBtn.classList.add("visible");
     }
 
-    function renderDetail(data) {
-      const ai = aiOf(data) || {};
-      const overview = ai.discussion_overview || [];
+    // ── Discussion chips ──
+    function chipsHtml(id, ai) {
+      const topics = (ai.discussion_overview || []).filter((t) => t && t.category);
       const terms = ai.terminologies || [];
       const quip = ai.sarcastic_question || "";
-
-      if (!overview.length && !terms.length && !quip) {
-        return `<p class="loading-detail">No discussion details available.</p>`;
-      }
-
-      let html = "";
-      if (quip) {
-        html += `<div class="item-quip">${esc(quip)}</div>`;
-      }
-      if (overview.length) {
-        html += overview.map(s => `
-          <div class="discussion-section">
-            <h3>${esc(s.category)}</h3>
-            <p>${esc(s.summary)}</p>
-          </div>`).join("");
-      }
-      if (terms.length) {
-        html += `<div class="glossary"><h4>Terms</h4>
-          ${terms.map(g => `<div class="glossary-item"><strong>${esc(g.term)}:</strong> ${esc(g.explanation)}</div>`).join("")}
-        </div>`;
-      }
-      return html;
+      if (!topics.length && !terms.length && !quip) return "";
+      return `<div class="chips" role="group" aria-label="Discussion topics">
+        ${quip ? `<div class="chips-extra chips-quip"><div class="item-quip">${esc(quip)}</div></div>` : ""}
+        ${topics.map((t, i) => `
+        <div class="chip-item">
+          <button class="chip" aria-expanded="false" aria-controls="chip-body-${id}-${i}"><span>${esc(t.category)}</span></button>
+          <div class="chip-body" id="chip-body-${id}-${i}" hidden><div class="chip-body-title">${esc(t.category)}</div><p>${esc(t.summary)}</p></div>
+        </div>`).join("")}
+        ${terms.length ? `<div class="chips-extra chips-terms"><div class="glossary"><h4>Terms</h4>${terms.map((g) =>
+          `<div class="glossary-item"><strong>${esc(g.term)}:</strong> ${esc(g.explanation)}</div>`).join("")}</div></div>` : ""}
+      </div>`;
     }
+
+    function setChip(chip, open) {
+      chip.classList.toggle("on", open);
+      chip.setAttribute("aria-expanded", String(open));
+      document.getElementById(chip.getAttribute("aria-controls")).hidden = !open;
+    }
+
+    // Expanded view: every topic open, plus the quip and terms. Tapping the
+    // summary again returns to the collapsed view (topic chips only).
+    function toggleAllChips(item) {
+      const box = item.querySelector(".chips");
+      const expand = !box.classList.contains("all-open");
+      box.classList.toggle("all-open", expand);
+      box.querySelectorAll(".chip").forEach((c) => setChip(c, expand));
+    }
+
+    document.getElementById("stories").addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (chip) {
+        const open = !chip.classList.contains("on");
+        setChip(chip, open);
+        // Closing a topic leaves the expanded view (hides quip and terms).
+        if (!open) chip.closest(".chips").classList.remove("all-open");
+        return;
+      }
+      // Tapping the summary opens/closes all topics, unless the user is selecting text.
+      if (e.target.closest("a")) return;
+      const sum = e.target.closest(".item-summary.tappable");
+      if (sum && !String(window.getSelection())) toggleAllChips(sum.closest("[id^=item-]"));
+    });
 
     // ── Load ──
     function showError(msg) {
@@ -520,43 +554,6 @@
         });
       });
     }
-
-    // ── Expand ──
-    document.getElementById("stories").addEventListener("click", async (e) => {
-      let btn = e.target.closest(".expand-btn");
-      if (!btn) {
-        // Tapping the summary acts like the story's "more" button,
-        // unless the user is selecting text.
-        const sum = e.target.closest(".item-summary");
-        if (!sum || String(window.getSelection())) return;
-        btn = sum.closest("[id^=item-]").querySelector(".expand-btn.visible");
-        if (!btn || btn.disabled) return;
-      }
-      const id = btn.dataset.id;
-      const container = document.getElementById(`detail-${id}`);
-      if (container.classList.contains("open")) {
-        container.classList.remove("open");
-        btn.textContent = "more";
-        return;
-      }
-      btn.textContent = "loading...";
-      btn.disabled = true;
-      try {
-        const data = await fetchNHItem(id);
-        if (data) {
-          container.innerHTML = renderDetail(data);
-        } else {
-          container.innerHTML = `<p class="loading-detail">No AI summary available.</p>`;
-        }
-        container.classList.add("open");
-        btn.textContent = "less";
-      } catch {
-        container.innerHTML = `<p class="loading-detail">Failed to load.</p>`;
-        container.classList.add("open");
-        btn.textContent = "less";
-      }
-      btn.disabled = false;
-    });
 
     // ── Scroll ──
     window.addEventListener("scroll", () => {
