@@ -85,15 +85,20 @@
     }
 
     .item-quip {
-      font-size: 9pt;
-      color: #666;
-      font-weight: 600;
-      margin-bottom: 10px;
-      padding: 6px 10px;
-      background: #f0ead6;
-      border-left: 2px solid #ff6600;
+      font-size: 9.5pt;
+      color: #8a4210;
       line-height: 1.6;
+      margin-bottom: 10px;
+      padding-left: 1.3em;
+      text-indent: -1.3em; /* wrapped lines align after the opening bracket */
     }
+    /* Chinese corner brackets: the quip is Chinese, and they render cleanly. */
+    .item-quip::before, .item-quip::after {
+      color: #ff6600;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+    }
+    .item-quip::before { content: "「"; display: inline-block; width: 1.3em; text-indent: 0; }
+    .item-quip::after { content: "」"; }
 
     .item-summary {
       font-size: 9pt;
@@ -128,18 +133,13 @@
     .glossary-item strong { color: #000; }
 
 
-    /* ── Discussion topics: plain "▸ topic" lines under the points row, styled
-       like the original details. Tap a topic to open it; tap the summary for all. ── */
-    .item-summary.tappable { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    /* ── Discussion topics: plain "▸ topic" lines under the summary, styled like
+       the original details. The summary and this area toggle the expanded view. ── */
+    .item-summary.tappable, .chips { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    /* Desktop collapsed: topic lines wrap in one row. Expanded (and on phones):
+       a vertical list where each topic line heads its own text. */
     .chips { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 16px; margin: 2px 0 6px 38px; }
-    /* Desktop: chip-item wrappers dissolve so buttons form a row and bodies
-       (full width, in chip order) stack below it. Phones use a vertical list. */
-    .chip-item { display: contents; }
-    .chip { order: 1; }
-    .chip-body { order: 2; flex-basis: 100%; }
-    .chips-quip { order: 0; }
-    .chips-terms { order: 3; }
-    .chip-body-title { font-size: 10pt; font-weight: 700; color: #000; margin-bottom: 3px; }
+    .chips.all-open { flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
     .chip {
       background: none; border: 0; padding: 2px 0; margin: 0; font: inherit; cursor: pointer;
       max-width: 100%; text-align: left; -webkit-tap-highlight-color: transparent;
@@ -155,7 +155,7 @@
     @media (hover: hover) { .chip:hover > span { color: #000; } body.dark .chip:hover > span { color: #fff; } }
     .chip:focus-visible { outline: none; }
     .chip:focus-visible > span { outline: 2px solid #ff6600; outline-offset: 1px; }
-    .chip-body { margin: 4px 0 10px 0; }
+    .chip-body { margin: 1px 0 8px 1em; }
     .chip-body p { font-size: 9pt; color: #666; line-height: 1.6; }
     /* Quip and terms appear only in the expanded view (summary tap). */
     .chips-extra { display: none; align-self: stretch; flex-basis: 100%; }
@@ -216,11 +216,11 @@
       .chips { flex-direction: column; flex-wrap: nowrap; align-items: stretch; margin-left: 30px; }
       .chip-item { display: block; max-width: 100%; }
       .chip-body { margin: 1px 0 6px 1em; }
-      .chip-body-title { display: none; }
       /* Compact rows; each is a full-width button so adjacent rows leave no dead space. */
       .chip { display: block; width: 100%; padding: 4px 0; }
       .chip > span { font-size: 10pt; line-height: 1.45; }
       .chip-body p { font-size: 10pt; }
+      .item-quip { font-size: 10.5pt; }
     }
 
     /* ── Dark / newshacker theme ── */
@@ -250,11 +250,7 @@
 
 
     body.dark .item-zh { color: #999; }
-    body.dark .item-quip {
-      color: #ccc;
-      background: #141414;
-      border-left-color: #ff660060;
-    }
+    body.dark .item-quip { color: #e0a36b; }
 
     body.dark .item-summary {
       background: #141414;
@@ -275,7 +271,6 @@
     body.dark .chip > span { color: #bbb; }
     body.dark .chip.on > span { color: #ddd; }
     body.dark .chip-body p { color: #999; }
-    body.dark .chip-body-title { color: #ff8c00; }
   </style>
 </head>
 <body>
@@ -465,7 +460,7 @@
         ${topics.map((t, i) => `
         <div class="chip-item">
           <button class="chip" aria-expanded="false" aria-controls="chip-body-${id}-${i}"><span>${esc(t.category)}</span></button>
-          <div class="chip-body" id="chip-body-${id}-${i}" hidden><div class="chip-body-title">${esc(t.category)}</div><p>${esc(t.summary)}</p></div>
+          <div class="chip-body" id="chip-body-${id}-${i}" hidden><p>${esc(t.summary)}</p></div>
         </div>`).join("")}
         ${terms.length ? `<div class="chips-extra chips-terms"><div class="glossary"><h4>Terms</h4>${terms.map((g) =>
           `<div class="glossary-item"><strong>${esc(g.term)}:</strong> ${esc(g.explanation)}</div>`).join("")}</div></div>` : ""}
@@ -478,8 +473,8 @@
       document.getElementById(chip.getAttribute("aria-controls")).hidden = !open;
     }
 
-    // Expanded view: every topic open, plus the quip and terms. Tapping the
-    // summary again returns to the collapsed view (topic chips only).
+    // The summary and the topics area are one toggle: collapsed shows topic
+    // lines only; expanded shows the quip, every topic and the terms.
     function toggleAllChips(item) {
       const box = item.querySelector(".chips");
       const expand = !box.classList.contains("all-open");
@@ -488,18 +483,10 @@
     }
 
     document.getElementById("stories").addEventListener("click", (e) => {
-      const chip = e.target.closest(".chip");
-      if (chip) {
-        const open = !chip.classList.contains("on");
-        setChip(chip, open);
-        // Closing a topic leaves the expanded view (hides quip and terms).
-        if (!open) chip.closest(".chips").classList.remove("all-open");
-        return;
-      }
-      // Tapping the summary opens/closes all topics, unless the user is selecting text.
-      if (e.target.closest("a")) return;
-      const sum = e.target.closest(".item-summary.tappable");
-      if (sum && !String(window.getSelection())) toggleAllChips(sum.closest("[id^=item-]"));
+      // Ignore links and taps that end a text selection.
+      if (e.target.closest("a") || String(window.getSelection())) return;
+      const area = e.target.closest(".item-summary.tappable, .chips");
+      if (area) toggleAllChips(area.closest("[id^=item-]"));
     });
 
     // ── Load ──
